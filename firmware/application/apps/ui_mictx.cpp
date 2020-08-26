@@ -123,7 +123,7 @@ void MicTXView::do_timing() {
 				decay_timer = 0;
 			}
 		}
-	} else {
+	} else if(!force_on) {
 		// Check for PTT release
 		const auto switches_state = get_switches_state();
 		if (!switches_state[4] && transmitting && !button_touch)		// Select button
@@ -252,6 +252,8 @@ MicTXView::MicTXView(
 	tx_gain = transmitter_model.tx_gain();
 	field_rfgain.on_change = [this](int32_t v) {
 		tx_gain = v;
+		if(transmitting)
+			transmitter_model.set_tx_gain(tx_gain);
 		
 	};
 	field_rfgain.set_value(tx_gain);
@@ -259,6 +261,8 @@ MicTXView::MicTXView(
 	rf_amp = transmitter_model.rf_amp();
 	field_rfamp.on_change = [this](int32_t v) {
 		rf_amp = (bool)v;
+		if(transmitting)
+			transmitter_model.set_rf_amp(rf_amp);
 	};
 	field_rfamp.set_value(rf_amp ? 14 : 0);
 	
@@ -287,6 +291,10 @@ MicTXView::MicTXView(
 				break;
 			case 2:
 				if (!rx_enabled) {
+					if ( force_on ) {
+						force_on = false;
+						set_tx(false);
+					}
 					va_enabled = 1;
 					this->set_ptt_visibility(0);
 					check_rxactive.hidden(1);
@@ -294,6 +302,13 @@ MicTXView::MicTXView(
 				} else {
 					field_va.set_selected_index(1);
 				}
+				break;
+			case 3:
+				va_enabled = 0;
+				force_on = 1;
+				set_tx(true);
+				break;
+			default:
 				break;
 		}
 		set_dirty();

@@ -98,6 +98,7 @@ private:
 	rf::Frequency rx_frequency { 0 };
 	int32_t focused_ui { 2 };
 	bool button_touch { false };
+	bool force_on { false };
 
 	
 	Labels labels {
@@ -173,11 +174,12 @@ private:
 
 	OptionsField field_va {
 		{ 17 * 8, 8 * 8 },
-		3,
+		4,
 		{
 			{" OFF", 0},
 			{" PTT", 1},
-			{"AUTO", 2}
+			{"AUTO", 2},
+			{"  ON", 3}
 		}
 	};
 
