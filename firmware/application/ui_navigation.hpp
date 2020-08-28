@@ -213,7 +213,7 @@ public:
 	InformationView(NavigationView& nav);
 	
 private:
-	static constexpr auto version_string = "v1.2";
+	static constexpr auto version_string = "v1.2-local";
 	NavigationView& nav_;
 
 	Rectangle backdrop {
@@ -240,7 +240,7 @@ public:
 private:
 	Text text_info {
 		{ 4*8, 284, 20 * 8, 16 },
-		"Version " VERSION_STRING
+		"Version " //VERSION_STRING
 	};
 	
 	Button button_done {
