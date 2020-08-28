@@ -304,9 +304,13 @@ MicTXView::MicTXView(
 				}
 				break;
 			case 3:
-				va_enabled = 0;
-				force_on = 1;
-				set_tx(true);
+				if (!rx_enabled) {
+					va_enabled = 0;
+					force_on = 1;
+					set_tx(true);
+				} else {
+					field_va.set_selected_index(1);
+				}
 				break;
 			default:
 				break;
