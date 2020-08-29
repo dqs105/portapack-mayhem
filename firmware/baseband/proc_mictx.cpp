@@ -56,7 +56,7 @@ void MicTXProcessor::execute(const buffer_c8_t& buffer){
 			if (beep_timer) {
 				beep_timer--;
 			} else {
-				beep_timer = baseband_fs * 0.05;			// 50ms
+				beep_timer = baseband_fs * 0.025;			// 50ms
 				
 				if (beep_index == BEEP_TONES_NB) {
 					configured = false;
