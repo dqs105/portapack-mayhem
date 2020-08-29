@@ -1817,7 +1817,8 @@ void VuMeter::paint(Painter& painter) {
 			if (hold_timer) {
 				hold_timer--;
 			} else {
-				if (max) max--;	// Let it drop
+				if (max < 256 && max) max-=2;	// Let it drop
+				else max = 0;
 			}
 		}
 		
