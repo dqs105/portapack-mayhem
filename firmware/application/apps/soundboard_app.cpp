@@ -243,7 +243,8 @@ SoundBoardView::SoundBoardView(
 }
 
 SoundBoardView::~SoundBoardView() {
-	transmitter_model.disable();
+	stop();
+//	transmitter_model.disable();
 	baseband::shutdown();
 }
 
