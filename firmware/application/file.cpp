@@ -107,9 +107,9 @@ Optional<File::Error> File::write_line(const std::string& s) {
 		return { result_s.error() };
 	}
 
-	const auto result_crlf = write("\r\n", 2);
-	if( result_crlf.is_error() ) {
-		return { result_crlf.error() };
+	const auto result_lf = write("\n", 1); // Use LF only. CR causes bugs?
+	if( result_lf.is_error() ) {
+		return { result_lf.error() };
 	}
 
 	return { };
