@@ -83,6 +83,7 @@ void FreqManBaseView::populate_categories() {
 	
 	options_category.set_options(categories);
 	options_category.set_selected_index(last_category_id);
+	change_category(last_category_id); // Fix error when last = last != current (current defaults to 0)
 	
 	options_category.on_change = [this](size_t category_id, int32_t) {
 		if (on_change_category)
