@@ -213,6 +213,16 @@ GpsSimAppView::GpsSimAppView(
 	};
 
 	field_frequency.set_step(5000);
+
+	field_lna.on_change = [this](int32_t v) {
+		transmitter_model.set_tx_gain(v);
+	};
+	field_lna.set_value(transmitter_model.tx_gain());
+
+	field_rf_amp.on_change = [this](bool_t v) {
+		transmitter_model.set_rf_amp(v);
+	};
+	field_rf_amp.set_value(transmitter_model.rf_amp());
 	
 	button_play.on_select = [this](ImageButton&) {
 		this->toggle();

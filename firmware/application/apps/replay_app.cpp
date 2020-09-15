@@ -139,7 +139,7 @@ void ReplayAppView::start() {
 			}
 		);
 	}
-	
+	/*
 	radio::enable({
 		receiver_model.tuning_frequency(),
 		sample_rate * 8 ,
@@ -149,6 +149,13 @@ void ReplayAppView::start() {
 		static_cast<int8_t>(receiver_model.lna()),
 		static_cast<int8_t>(receiver_model.vga())
 	});
+	*/
+//	transmitter_model.set_tuning_frequency(tx_frequency);
+//	transmitter_model.set_tx_gain(tx_gain);
+//	transmitter_model.set_rf_amp(rf_amp);
+	transmitter_model.set_sampling_rate(sample_rate * 8);
+	transmitter_model.set_baseband_bandwidth(baseband_bandwidth);
+	transmitter_model.enable();
 }
 
 void ReplayAppView::stop(const bool do_loop) {
@@ -158,7 +165,8 @@ void ReplayAppView::stop(const bool do_loop) {
 	if (do_loop && check_loop.value()) {
 		start();
 	} else {
-		radio::disable();
+//		radio::disable();
+		transmitter_model.disable();
 		button_play.set_bitmap(&bitmap_play);
 	}
 	
@@ -212,6 +220,16 @@ ReplayAppView::ReplayAppView(
 	};
 
 	field_frequency.set_step(5000);
+
+	field_lna.on_change = [this](int32_t v) {
+		transmitter_model.set_tx_gain(v);
+	};
+	field_lna.set_value(transmitter_model.tx_gain());
+
+	field_rf_amp.on_change = [this](bool_t v) {
+		transmitter_model.set_rf_amp(v);
+	};
+	field_rf_amp.set_value(transmitter_model.rf_amp());
 	
 	button_play.on_select = [this](ImageButton&) {
 		this->toggle();

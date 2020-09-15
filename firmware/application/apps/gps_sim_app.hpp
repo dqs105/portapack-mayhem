@@ -104,11 +104,27 @@ private:
 	FrequencyField field_frequency {
 		{ 0 * 8, 2 * 16 },
 	};
+	/*
 	LNAGainField field_lna {
 		{ 14 * 8, 2 * 16 }
 	};
 	RFAmpField field_rf_amp {
 		{ 19 * 8, 2 * 16 }
+	};
+	*/
+	NumberField field_lna {
+		{ 14 * 8, 2 * 16 },
+		2,
+		{ 0, 47 },
+		1,
+		' '
+	};
+	NumberField field_rf_amp {
+		{ 19 * 8, 2 * 16 },
+		1,
+		{ 0, 1 },
+		1,
+		' '
 	};
 	Checkbox check_loop {
 		{ 21 * 8, 2 * 16 },
