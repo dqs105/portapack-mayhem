@@ -463,3 +463,30 @@ void ClockManager::stop_audio_pll() {
 	cgu::pll0audio::power_down();
 	while( cgu::pll0audio::is_locked() );
 }
+
+void ClockManager::enable_clock_output(bool enable) {
+	uint8_t output_enable = clock_generator.read_register(Register::OutputEnableControl);
+	output_enable = output_enable & !(1<<3); // !SI5351C_CLK_DISABLE(3)
+	if(enable)
+		output_enable = output_enable | (0<<3); // SI5351C_CLK_ENABLE(3)
+	else
+		output_enable = output_enable | (1<<3); // SI5351C_CLK_DISABLE(3)
+
+	clock_generator.write_register(Register::OutputEnableControl, output_enable);
+	clock_generator.set_ms_frequency(3, 10000000, si5351_vco_f, 0);
+
+	uint8_t pll;
+	Reference ref = get_reference();
+	if(ref.source >= PortaPack) {
+		pll = 1; // SI5351C_CLK_PLL_SRC_B = 1
+	} else {
+		pll = 0; // SI5351C_CLK_PLL_SRC_A = 0
+	}
+
+	uint8_t clk3_ctrl;
+	if(enable)
+		clk3_ctrl = (1<<6) | (pll<<5) | (3<<2) | (3<<0); // SI5351C_CLK_INT_MODE | SI5351C_CLK_PLL_SRC(pll) | SI5351C_CLK_SRC(SI5351C_CLK_SRC_MULTISYNTH_SELF) | SI5351C_CLK_IDRV(SI5351C_CLK_IDRV_8MA);
+	else
+		clk3_ctrl = (1<<7) | (1<<6); // SI5351C_CLK_POWERDOWN | SI5351C_CLK_INT_MODE;
+	clock_generator.write_register(Register::CLKControl3, clk3_ctrl);
+}

@@ -388,6 +388,10 @@ bool init() {
 	LPC_CREG->DMAMUX = portapack::gpdma_mux;
 	gpdma::controller.enable();
 
+	// Init external clock
+	if(persistent_memory::clkout_enabled())
+		clock_manager.enable_clock_output(persistent_memory::clkout_enabled());
+
 	return true;
 }
 

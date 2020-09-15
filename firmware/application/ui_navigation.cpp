@@ -168,6 +168,10 @@ SystemStatusView::SystemStatusView(
 		DisplaySleepMessage message;
 		EventDispatcher::send_message(message);
 	};
+
+	image_clock_status.on_select = [this](ImageButton&) {
+		this->on_clk();
+	};
 }
 
 void SystemStatusView::refresh() {
@@ -184,15 +188,20 @@ void SystemStatusView::refresh() {
 		button_bias_tee.set_foreground(ui::Color::yellow());
 	} else {
 		button_bias_tee.set_bitmap(&bitmap_icon_biast_off);
-		button_bias_tee.set_foreground(ui::Color::light_grey());
+		button_bias_tee.set_foreground(ui::Color::green());
 	}
 	
 	if (portapack::clock_manager.get_reference().source == ClockManager::ReferenceSource::External) {
 		image_clock_status.set_bitmap(&bitmap_icon_clk_ext);
-		button_bias_tee.set_foreground(ui::Color::green());
+//		image_clock_status.set_foreground(ui::Color::green());
 	} else {
 		image_clock_status.set_bitmap(&bitmap_icon_clk_int);
-		button_bias_tee.set_foreground(ui::Color::light_grey());
+//		image_clock_status.set_foreground(ui::Color::light_grey());
+	}
+	if(portapack::persistent_memory::clkout_enabled()) {
+		image_clock_status.set_foreground(ui::Color::green());
+	} else {
+		image_clock_status.set_foreground(ui::Color::light_grey());
 	}
 	
 	set_dirty();
@@ -300,6 +309,18 @@ void SystemStatusView::on_camera() {
 		portapack::display.read_pixels({ 0, i, 240, 1 }, row);
 		png.write_scanline(row);
 	}
+}
+
+void SystemStatusView::on_clk() {
+	bool v = portapack::persistent_memory::clkout_enabled();
+	if(v) {
+		v = false;
+	} else {
+		v = true;
+	}
+	portapack::clock_manager.enable_clock_output(v);
+	portapack::persistent_memory::set_clkout_enabled(v);
+	refresh();
 }
 
 void SystemStatusView::on_title() {
