@@ -69,7 +69,9 @@ POCSAGAppView::POCSAGAppView(NavigationView& nav) {
 		&field_vga,
 		&field_frequency,
 		&options_bitrate,
+		&options_mode,
 		&options_phase,
+		&options_paging_mode,
 		&check_log,
 		&check_ignore,
 		&sym_ignore,
@@ -79,6 +81,8 @@ POCSAGAppView::POCSAGAppView(NavigationView& nav) {
 	receiver_model.set_sampling_rate(3072000);
 	receiver_model.set_baseband_bandwidth(1750000);
 	receiver_model.enable();
+
+	target_frequency_ = receiver_model.tuning_frequency();
 	
 	field_frequency.set_value(receiver_model.tuning_frequency());
 	field_frequency.set_step(receiver_model.frequency_step());
@@ -107,6 +111,17 @@ POCSAGAppView::POCSAGAppView(NavigationView& nav) {
 	options_phase.on_change = [this](size_t, OptionsField::value_t v) {
 		on_config_changed(options_bitrate.selected_index_value(),v);
 	};
+
+	options_mode.on_change = [this](size_t, OptionsField::value_t v) {
+		decode_mode = options_mode.selected_index_value();
+	};
+	options_mode.set_selected_index(0); // AUTO
+
+	options_paging_mode.on_change = [this](size_t, OptionsField::value_t v) {
+		paging_mode = options_paging_mode.selected_index_value();
+	};
+	options_paging_mode.set_selected_index(1); // COM
+
 	check_ignore.set_value(ignore);
 	check_ignore.on_select = [this](Checkbox&, bool v) {
 		ignore = v;
@@ -157,9 +172,9 @@ void POCSAGAppView::on_packet(const POCSAGPacketMessage * message) {
 
 		std::string console_info;
 		
-		console_info = "\n" + to_string_datetime(message->packet.timestamp(), HM);
+		console_info = "\n" + to_string_datetime(message->packet.timestamp(), HMS);
 		console_info += " " + pocsag::bitrate_str(message->packet.bitrate());
-		console_info += " ADDR:" + to_string_dec_uint(pocsag_state.address);
+		console_info += " " + to_string_dec_uint(pocsag_state.address);
 		console_info += " F" + to_string_dec_uint(pocsag_state.function);
 
 		// Store last received address for POCSAG TX
@@ -177,10 +192,44 @@ void POCSAGAppView::on_packet(const POCSAGPacketMessage * message) {
 			}
 			
 			last_address = pocsag_state.address;
-		} else if (pocsag_state.out_type == MESSAGE) {
-			if (pocsag_state.address != last_address) {
+		} else if (pocsag_state.out_type >= MESSAGE) {
+			if(decode_mode == 0) { // AUTO
+				if(pocsag_state.out_type == MESSAGE)
+					goto message_dec;
+				if(pocsag_state.out_type > NUMBERIC)
+					goto numeric_dec;
+			}
+			if(decode_mode == 1) { // Alpha
+				goto message_dec;
+			}
+			if(decode_mode == 2) { // Numeric
+				goto numeric_dec;
+			}
+numeric_dec:
+			if (pocsag_state.address != last_address || !paging_mode) {
 				// New message
-				console.writeln(console_info);
+				console.writeln(console_info + " N");
+				console.write(pocsag_state.numout);
+				
+				last_address = pocsag_state.address;
+			} else {
+				// Message continues...
+				console.write(pocsag_state.numout);
+			}
+			
+			if (logger && logging)
+				logger->log_decoded(message->packet, to_string_dec_uint(pocsag_state.address) +
+													" F" + to_string_dec_uint(pocsag_state.function) +
+													" Numberic: " + pocsag_state.numout);
+			if(pocsag_state.out_type == NUMBERIC || decode_mode == 2)
+				goto dec_done;
+			else if(paging_mode)
+				console.write(" // A: ");
+
+message_dec:
+			if (pocsag_state.address != last_address || !paging_mode) {
+				// New message
+				console.writeln(console_info + " A");
 				console.write(pocsag_state.output);
 				
 				last_address = pocsag_state.address;
@@ -193,6 +242,11 @@ void POCSAGAppView::on_packet(const POCSAGPacketMessage * message) {
 				logger->log_decoded(message->packet, to_string_dec_uint(pocsag_state.address) +
 													" F" + to_string_dec_uint(pocsag_state.function) +
 													" Alpha: " + pocsag_state.output);
+
+dec_done:
+			asm (
+				"nop\r\n"
+			);
 		}
 	}
 	

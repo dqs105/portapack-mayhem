@@ -101,6 +101,31 @@ uint32_t get_digit_code(char code) {
 	
 	return code;
 }
+
+char decode_digit_code(uint32_t code) {
+	code = ((code & 0x0C) >> 2) | ((code & 0x03) << 2);		// ----3210 -> ----1032
+	code = ((code & 0x0A) >> 1) | ((code & 0x05) << 1);		// ----1032 -> ----0123
+	if ((code >= 0) && (code <= 9)) {
+		code += '0';
+	} else {
+		if (code == 10)
+			code = 'S';
+		else if (code == 11)
+			code = 'U';
+		else if (code == 12)
+			code = ' ';
+		else if (code == 13)
+			code = '-';
+		else if (code == 14)
+			code = ']';
+		else if (code == 15)
+			code = '[';
+		else
+			code = ' ';
+	}
+	
+	return (char)code;
+}
 	
 void pocsag_encode(const MessageType type, BCHCode& BCH_code, const uint32_t function, const std::string message, const uint32_t address,
 	std::vector<uint32_t>& codewords) {
@@ -222,7 +247,9 @@ void pocsag_encode(const MessageType type, BCHCode& BCH_code, const uint32_t fun
 void pocsag_decode_batch(const POCSAGPacket& batch, POCSAGState * const state) {
 	uint32_t codeword;
 	char ascii_char;
+	uint16_t errors = 0;
 	std::string output_text = "";
+	std::string output_num = "";
 	
 	state->out_type = EMPTY;
 	
@@ -235,7 +262,7 @@ void pocsag_decode_batch(const POCSAGPacket& batch, POCSAGState * const state) {
 			if (state->mode == STATE_CLEAR) {
 				if (codeword != POCSAG_IDLEWORD) {
 					state->function = (codeword >> 11) & 3;
-					state->address = (codeword >> 10) & 0x1FFFF8U;	// 18 MSBs are transmitted
+					state->address = (codeword >> 10) & 0x1FFFF8U | (i >> 1);	// 18 MSBs are transmitted + positioned addr
 					state->mode = STATE_HAVE_ADDRESS;
 					state->out_type = ADDRESS;
 					
@@ -252,7 +279,7 @@ void pocsag_decode_batch(const POCSAGPacket& batch, POCSAGState * const state) {
 				state->address |= (i >> 1);				// Add in the 3 LSBs (frame #)
 				state->mode = STATE_GETTING_MSG;
 			}
-			
+
 			state->out_type = MESSAGE;
 			
 			state->ascii_data |= ((codeword >> 11) & 0xFFFFF);	// Get 20 message bits
@@ -269,17 +296,35 @@ void pocsag_decode_batch(const POCSAGPacket& batch, POCSAGState * const state) {
 				ascii_char = (ascii_char & 0xAA) >> 2 | (ascii_char & 0x55);		// 67452301 -> *7654321
    
 				// Translate non-printable chars
-				if ((ascii_char < 32) || (ascii_char > 126))
+				if ((ascii_char < 32) || (ascii_char > 126)) {
 					output_text += "[" + to_string_dec_uint(ascii_char) + "]";
+					if(ascii_char != 0x00)
+						errors++;
+				}
 				else
 					output_text += ascii_char;
 			}
 			
 			state->ascii_data <<= 20;		// Remaining bits are for next time...
+
+			// Decode NUMBERIC simultaneously
+			uint32_t numcode = (codeword >> 11) & 0xFFFFF;
+			for(int i = 0; i < 5; i++) {
+				output_num += decode_digit_code((numcode & 0xF0000) >> 16);
+				numcode <<= 4;
+			}
 		}
+	}
+
+	if(errors > 1) {
+		state->out_type = ENUMBERIC; // Have non-printable chars. Maybe NUMBERIC mode?
+	}
+	if(errors > 5) {
+		state->out_type = NUMBERIC; // Too many non-printable chars. Put it in numberic mode!
 	}
 	
 	state->output = output_text;
+	state->numout = output_num;
 	
 	if (state->mode == STATE_HAVE_ADDRESS)
 		state->mode = STATE_CLEAR;

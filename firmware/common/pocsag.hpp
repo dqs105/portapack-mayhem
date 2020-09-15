@@ -46,7 +46,9 @@ enum Mode : uint32_t {
 enum OutputType : uint32_t {
 	EMPTY,
 	ADDRESS,
-	MESSAGE
+	MESSAGE,
+	ENUMBERIC,
+	NUMBERIC
 };
 
 enum MessageType : uint32_t {
@@ -63,6 +65,7 @@ struct POCSAGState {
 	uint32_t ascii_data;
 	uint32_t ascii_idx;
 	std::string output;
+	std::string numout;
 };
 
 const pocsag::BitRate pocsag_bitrates[3] = {

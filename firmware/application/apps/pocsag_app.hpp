@@ -58,12 +58,14 @@ public:
 	std::string title() const override { return "POCSAG RX"; };
 
 private:
-	static constexpr uint32_t initial_target_frequency = 466175000;
+//	static constexpr uint32_t initial_target_frequency = 466175000;
 
 	bool logging { true };
 	bool ignore { false };
 	uint32_t last_address = 0xFFFFFFFF;
 	pocsag::POCSAGState pocsag_state { };
+	uint8_t decode_mode = 0;
+	bool paging_mode = true;
 
 	RFAmpField field_rf_amp {
 		{ 13 * 8, 0 * 16 }
@@ -93,12 +95,29 @@ private:
 			{ "2400bps", 2 }
 		}
 	};
+	OptionsField options_mode {
+		{ 0 * 8, 21},
+		5,
+		{
+			{ "AUTO ", 0},
+			{ "ALPHA", 1},
+			{ "NUM  ", 2}
+		}
+	};
 	OptionsField options_phase {
-		{ 6 * 8, 21 },
+		{ 10 * 8, 21 },
 		1,
 		{
 			{ "P", 0 },
-			{ "N", 1 },
+			{ "N", 1 }
+		}
+	};
+	OptionsField options_paging_mode {
+		{ 6 * 8, 21 },
+		3,
+		{
+			{ "SEP", 0 },
+			{ "COM", 1 }
 		}
 	};
 	Checkbox check_log {
@@ -126,7 +145,7 @@ private:
 
 	std::unique_ptr<POCSAGLogger> logger { };
 
-	uint32_t target_frequency_ = initial_target_frequency;
+	uint32_t target_frequency_;
 	
 	void update_freq(rf::Frequency f);
 
