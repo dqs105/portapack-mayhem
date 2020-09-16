@@ -188,7 +188,7 @@ void SystemStatusView::refresh() {
 		button_bias_tee.set_foreground(ui::Color::yellow());
 	} else {
 		button_bias_tee.set_bitmap(&bitmap_icon_biast_off);
-		button_bias_tee.set_foreground(ui::Color::green());
+		button_bias_tee.set_foreground(ui::Color::light_grey());
 	}
 	
 	if (portapack::clock_manager.get_reference().source == ClockManager::ReferenceSource::External) {
