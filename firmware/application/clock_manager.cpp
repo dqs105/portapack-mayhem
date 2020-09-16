@@ -472,7 +472,6 @@ void ClockManager::enable_clock_output(bool enable) {
 		clock_generator.disable_output(clock_generator_output_clkout);
 	}
 
-	uint8_t clk3_ctrl;
 	if(enable)
 		clock_generator.set_clock_control(clock_generator_output_clkout, si5351_clock_control_common[clock_generator_output_clkout].ms_src(get_reference_clock_generator_pll(reference.source)).clk_pdn(ClockControl::ClockPowerDown::Power_On));
 	else
