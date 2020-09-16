@@ -180,7 +180,7 @@ private:
 		Color::dark_grey()
 	};
 	
-	ImageButton image_clock_status {
+	ImageButton button_clock_status {
 		{ 27 * 8, 0 * 16,  2 * 8, 1 * 16 },
 		&bitmap_icon_clk_int,
 		Color::light_grey(),
