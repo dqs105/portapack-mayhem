@@ -1762,15 +1762,21 @@ VuMeter::VuMeter(
 }
 
 void VuMeter::set_value(const uint32_t new_value) {
-	if ((new_value != value_) && (new_value < 256)) {
-		value_ = new_value;
+	if ((new_value != value_) || new_value != max) {
+		if(new_value >= 256)
+			value_ = 255;
+		else 
+			value_ = new_value;
 		set_dirty();
 	}
 }
 
 void VuMeter::set_mark(const uint32_t new_mark) {
-	if ((new_mark != mark) && (new_mark < 256)) {
-		mark = new_mark;
+	if ((new_mark != mark)) {
+		if(new_mark >= 256)
+			mark = 255;
+		else
+			mark = new_mark;
 		set_dirty();
 	}
 }
@@ -1817,7 +1823,7 @@ void VuMeter::paint(Painter& painter) {
 			if (hold_timer) {
 				hold_timer--;
 			} else {
-				if (max < 256 && max) max-=2;	// Let it drop
+				if (max < 256 && max) max--;	// Let it drop
 				else max = 0;
 			}
 		}
