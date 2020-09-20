@@ -33,6 +33,7 @@ void SigGenProcessor::execute(const buffer_c8_t& buffer) {
 	for (size_t i = 0; i < buffer.count; i++) {
 		
 		if (!sample_count && auto_off) {
+			configured = false;
 			txprogress_message.done = true;
 			shared_memory.application_queue.push(txprogress_message);
 		} else
@@ -40,7 +41,7 @@ void SigGenProcessor::execute(const buffer_c8_t& buffer) {
 		
 		if (tone_shape == 0) {
 			// CW
-			re = 0;
+			re = 127;
 			im = 0;
 		} else {
 			
@@ -61,8 +62,9 @@ void SigGenProcessor::execute(const buffer_c8_t& buffer) {
 				// Square
 				sample = (((tone_phase & 0xFF000000) >> 24) & 0x80) ? 127 : -128;
 			} else if (tone_shape == 6) {
-				// Noise
-				sample = (lfsr & 0xFF000000) >> 24;
+				// Noise 
+				// This is old method. Strange not working well.
+				sample = ((lfsr & 0xFF000000) >> 24) - 127;
 				feedback = ((lfsr >> 31) ^ (lfsr >> 29) ^ (lfsr >> 15) ^ (lfsr >> 11)) & 1;
 				lfsr = (lfsr << 1) | feedback;
 				if (!lfsr) lfsr = 0x1337;				// Shouldn't do this :(
@@ -103,7 +105,7 @@ void SigGenProcessor::on_message(const Message* const msg) {
 			fm_delta = message.bw * (0xFFFFFFULL / 1536000);
 			tone_shape = message.shape;
 			
-			lfsr = 0x54DF0119;
+//			lfsr = 0x54DF0119;
 
 			configured = true;
 			break;
