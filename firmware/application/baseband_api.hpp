@@ -39,7 +39,7 @@ struct AMConfig {
 	const fir_taps_complex<64> channel;
 	const AMConfigureMessage::Modulation modulation;
 
-	void apply() const;
+	void apply(const uint8_t spec_zoom) const;
 };
 
 struct NBFMConfig {

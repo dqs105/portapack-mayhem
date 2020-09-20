@@ -48,7 +48,7 @@ public:
 private:
 	Text label_config {
 		{ 0 * 8, 0 * 16, 2 * 8, 1 * 16 },
-		"BW",
+		"BW      ZOOM",
 	};
 
 	OptionsField options_config {
@@ -59,6 +59,17 @@ private:
 			{ "USB ", 0 },
 			{ "LSB ", 0 },
 			{ "CW  ", 0 },
+			{ "WDSB", 0 }
+		}
+	};
+
+	OptionsField options_zoom {
+		{ 13 * 8, 0 * 16 },
+		3,
+		{
+			{ "x1 ", 1 },
+			{ "x2 ", 2 },
+			{ "x4 ", 4 }
 		}
 	};
 };

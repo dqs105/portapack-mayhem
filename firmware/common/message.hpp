@@ -541,14 +541,16 @@ public:
 		const fir_taps_real<32> decim_2_filter,
 		const fir_taps_complex<64> channel_filter,
 		const Modulation modulation,
-		const iir_biquad_config_t audio_hpf_config
+		const iir_biquad_config_t audio_hpf_config,
+		const uint8_t spec_zoom
 	) : Message { ID::AMConfigure },
 		decim_0_filter(decim_0_filter),
 		decim_1_filter(decim_1_filter),
 		decim_2_filter(decim_2_filter),
 		channel_filter(channel_filter),
 		modulation { modulation },
-		audio_hpf_config(audio_hpf_config)
+		audio_hpf_config(audio_hpf_config),
+		spec_zoom(spec_zoom)
 	{
 	}
 
@@ -558,6 +560,7 @@ public:
 	const fir_taps_complex<64> channel_filter;
 	const Modulation modulation;
 	const iir_biquad_config_t audio_hpf_config;
+	const uint8_t spec_zoom;
 };
 
 // TODO: Put this somewhere else, or at least the implementation part.

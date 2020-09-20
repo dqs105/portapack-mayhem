@@ -43,14 +43,15 @@ static void send_message(const Message* const message) {
 	while(shared_memory.baseband_message);
 }
 
-void AMConfig::apply() const {
+void AMConfig::apply(const uint8_t spec_zoom) const {
 	const AMConfigureMessage message {
 		taps_6k0_decim_0,
 		taps_6k0_decim_1,
 		taps_6k0_decim_2,
 		channel,
 		modulation,
-		audio_12k_hpf_300hz_config
+		audio_12k_hpf_300hz_config,
+		spec_zoom
 	};
 	send_message(&message);
 	audio::set_rate(audio::Rate::Hz_12000);

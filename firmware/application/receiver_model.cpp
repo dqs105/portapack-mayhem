@@ -38,11 +38,12 @@ using namespace portapack;
 
 namespace {
 
-static constexpr std::array<baseband::AMConfig, 4> am_configs { {
+static constexpr std::array<baseband::AMConfig, 5> am_configs { {
 	{ taps_6k0_dsb_channel, AMConfigureMessage::Modulation::DSB },
 	{ taps_2k8_usb_channel, AMConfigureMessage::Modulation::SSB },
-	{ taps_2k8_lsb_channel, AMConfigureMessage::Modulation::SSB },	
+	{ taps_2k8_lsb_channel, AMConfigureMessage::Modulation::SSB },
 	{ taps_0k7_usb_channel, AMConfigureMessage::Modulation::SSB },
+	{ taps_10k0_dsb_channel, AMConfigureMessage::Modulation::DSB },
 } };
 
 static constexpr std::array<baseband::NBFMConfig, 3> nbfm_configs { {
@@ -286,7 +287,18 @@ size_t ReceiverModel::am_configuration() const {
 }
 
 void ReceiverModel::update_am_configuration() {
-	am_configs[am_config_index].apply();
+	am_configs[am_config_index].apply(am_spec_zoom_);
+}
+
+size_t ReceiverModel::am_spec_zoom() const {
+	return am_spec_zoom_;
+}
+
+void ReceiverModel::set_am_spec_zoom(const size_t n) {
+	if(n <= 4 && n > 0) {
+		am_spec_zoom_ = n;
+		update_am_configuration();
+	}
 }
 
 size_t ReceiverModel::nbfm_configuration() const {
