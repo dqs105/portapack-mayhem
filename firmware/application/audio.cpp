@@ -178,6 +178,14 @@ void stop() {
 	audio_codec->microphone_disable();
 }
 
+void setamp(uint8_t gain) {
+	audio_codec->microphone_setamp(gain);
+}
+
+void setvol(uint8_t vol) {
+	audio_codec->microphone_setvol(vol);
+}
+
 } /* namespace input */
 
 namespace headphone {

@@ -51,6 +51,8 @@ public:
 
 	virtual void microphone_enable() = 0;
 	virtual void microphone_disable() = 0;
+	virtual void microphone_setamp(uint8_t vol) = 0;
+	virtual void microphone_setvol(uint8_t vol) = 0;
 
 	virtual size_t reg_count() const = 0;
 	virtual size_t reg_bits() const = 0;
@@ -74,6 +76,8 @@ namespace input {
 
 void start();
 void stop();
+void setamp(uint8_t gain);
+void setvol(uint8_t vol);
 
 } /* namespace input */
 

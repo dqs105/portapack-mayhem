@@ -129,6 +129,7 @@ void MicTXView::do_timing() {
 		if (!switches_state[4] && transmitting && !button_touch)		// Select button
 			set_tx(false);
 	}
+	update_vumeter();
 }
 
 /* Hmmmm. Maybe useless now.
@@ -154,16 +155,15 @@ void MicTXView::rxaudio(bool is_on) {
 		receiver_model.set_rf_amp(rx_amp);
 		receiver_model.enable();
 		audio::output::start();
+		audio_level = 0; // Fix VUMeter disappear bug
+		update_vumeter();
 	} else {	//These incredibly convoluted steps are required for the vumeter to reappear when stopping RX.
 		receiver_model.disable();
 		baseband::shutdown();
 		baseband::run_image(portapack::spi_flash::image_tag_mic_tx);
 		audio::input::start();
-//		transmitter_model.enable();		
 		portapack::pin_i2s0_rx_sda.mode(3);
-//		transmitting = false;
 		configure_baseband();
-//		transmitter_model.disable();
 	}
 }
 
@@ -190,6 +190,8 @@ MicTXView::MicTXView(
 		&labels,
 		&vumeter,
 		&options_gain,
+		&field_micgain,
+		&field_micvol,
 //		&check_va,
 		&field_va,
 		&field_va_level,
@@ -222,6 +224,18 @@ MicTXView::MicTXView(
 		configure_baseband();
 	};
 	options_gain.set_selected_index(1);		// x1.0
+
+	field_micgain.on_change = [this](uint32_t v) {
+		audio::input::setamp(v);
+	};
+	field_micgain.set_value(6); // default 0b0110 = 6
+	audio::input::setamp(6);
+
+	field_micvol.on_change = [this](uint32_t v) {
+		audio::input::setvol(v);
+	};
+	field_micvol.set_value(145);
+	audio::input::setvol(145); // default = 0x91 = 145, 0dB.
 	
 	tx_frequency = transmitter_model.tuning_frequency();
 	field_frequency.set_value(transmitter_model.tuning_frequency());

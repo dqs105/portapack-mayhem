@@ -102,7 +102,7 @@ private:
 
 	
 	Labels labels {
-		{ { 3 * 8, 1 * 8 }, "MIC. GAIN:", Color::light_grey() },
+		{ { 3 * 8, 1 * 8 }, "MIC. AMP:   V:    G:", Color::light_grey() },
 		{ { 3 * 8, 3 * 8 }, "F:", Color::light_grey() },
 		{ { 15 * 8, 3 * 8 }, "BW:   kHz", Color::light_grey() },
 		{ { 3 * 8, 5 * 8 }, "GAIN:", Color::light_grey() },
@@ -126,9 +126,25 @@ private:
 		true
 	};
 
+	NumberField field_micgain {
+		{ 12 * 8, 1 * 8 },
+		2,
+		{ 0, 10 },
+		1,
+		' '
+	};
+
+	NumberField field_micvol {
+		{ 17 * 8, 1 * 8 },
+		3,
+		{ 0, 241 },
+		1,
+		' '
+	};
+
 	
 	OptionsField options_gain {
-		{ 13 * 8, 1 * 8 },
+		{ 23 * 8, 1 * 8 },
 		4,
 		{
 			{ "x0.5", 5 },

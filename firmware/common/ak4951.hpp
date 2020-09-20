@@ -841,6 +841,8 @@ public:
 
 	void microphone_enable();
 	void microphone_disable();
+	void microphone_setamp(uint8_t vol);
+	void microphone_setvol(uint8_t vol);
 
 	size_t reg_count() const override {
 		return asahi_kasei::ak4951::reg_count;

@@ -80,39 +80,79 @@ void AK4951::init() {
 	map.r.signal_select_3.MONO = 0b00;
 	update(Register::SignalSelect3);
 
-	map.r.digital_filter_mode.PFSDO = 0;	// ADC bypass digital filter block.
+	map.r.digital_filter_mode.PFSDO = 1;	// Enable Digital Filter. --// ADC bypass digital filter block.--
 	map.r.digital_filter_mode.ADCPF = 1;	// ADC output
 	map.r.digital_filter_mode.PFDAC = 0b00;	// SDTI
 	update(Register::DigitalFilterMode);
 
-	// Set up FRN, FRATT and ADRST1-0 bits (Addr = 09H)
-	// map.r.timer_select.FRN = 0;
-	// map.r.timer_select.FRATT = 0;
-	// map.r.timer_select.ADRST = 0b00;
-	// update(Register::TimerSelect);
-
-	// Set up ALC mode (Addr = 0AH, 0BH)
-	// map.r.alc_timer_select. = ;
-	// update(Register::ALCTimerSelect);
-	// map.r.alc_mode_control_1. = ;
-	// update(Register::ALCModeControl1);
-
-	// Set up REF value of ALC (Addr = 0CH)
-	// map.r.alc_mode_control_2. = ;
-	// update(Register::ALCModeControl2);
-
-	// Set up IVOL value of ALC operation start (Addr = 0DH)
-	// map.r.l_ch_input_volume_control. = ;
-	// update(Register::LchInputVolumeControl);
-	// map.r.r_ch_input_volume_control. = ;
-	// update(Register::RchInputVolumeControl);
-
 	// Set up the output digital volume. (Addr = 13H)
 	// set_headphone_volume(...);
 
-	// Set up Programmable Filter Path: PFDAC1-0 bits=“01”, PFSDO=ADCPF bits=“0” (Addr = 1DH)
-	// map.r.digital_filter_mode.PFDAC = 0b01;
-	// update(Register::DigitalFilterMode);
+	// Microphone init
+
+	const uint_fast8_t mgain = 0b0110;
+	map.r.signal_select_1.MGAIN20 = mgain & 7;
+	map.r.signal_select_1.MPSEL = 1;	// MPWR2 pin
+	map.r.signal_select_1.MGAIN3 = (mgain >> 3) & 1;
+	update(Register::SignalSelect1);
+
+	map.r.signal_select_2.INL = 0b01;	// Lch input signal = LIN2
+	map.r.signal_select_2.INR = 0b01;	// Rch input signal = RIN2
+	map.r.signal_select_2.MICL = 0;		// MPWR = 2.4V
+	update(Register::SignalSelect2);
+	
+	map.r.r_ch_mic_gain_setting.MGR = 0x80;	// Microphone sensitivity correction = 0dB.
+	update(Register::RchMicGainSetting);
+
+	// ALC. Just shits.
+/*
+	map.r.timer_select.FRN = 0;
+	update(Register::TimerSelect);
+
+	map.r.alc_timer_select.WTM = 0b11;
+	map.r.alc_timer_select.RFST = 0b00;
+	map.r.alc_timer_select.EQFC = 0b10;
+	update(Register::ALCTimerSelect);
+	map.r.alc_mode_control_1.LMTH10 = 0b01;
+	map.r.alc_mode_control_1.LMTH2 = 0b0; // LMTH = 0b010
+	map.r.alc_mode_control_1.RGAIN = 011;
+	map.r.alc_mode_control_1.ALC = 0;
+	map.r.alc_mode_control_1.ALCEQN = 0;
+	update(Register::ALCModeControl1);
+
+	map.r.alc_mode_control_2.REF = 0xE1;
+	update(Register::ALCModeControl2);
+*/
+	map.r.auto_hpf_control.STG = 0b10;
+	map.r.auto_hpf_control.SENC = 0b011;
+	map.r.auto_hpf_control.AHPF = 1;
+	update(Register::AutoHPFControl);
+
+	map.r.digital_filter_select_1.HPFAD = 1;	// HPF1 (after ADC) = on
+	map.r.digital_filter_select_1.HPFC = 0b11;	// 236.8 Hz @ fs=48k
+	update(Register::DigitalFilterSelect1);
+
+	map.r.digital_filter_select_2.HPF = 0;
+	map.r.digital_filter_select_2.LPF = 0;
+	map.r.digital_filter_select_2.FIL3 = 0;
+	map.r.digital_filter_select_2.EQ0 = 0;
+	map.r.digital_filter_select_2.GN = 0b00;
+	update(Register::DigitalFilterSelect2);
+
+	map.r.digital_filter_select_3.EQ1 = 0;
+	map.r.digital_filter_select_3.EQ2 = 0;
+	map.r.digital_filter_select_3.EQ3 = 0;
+	map.r.digital_filter_select_3.EQ4 = 0;
+	map.r.digital_filter_select_3.EQ5 = 0;
+	update(Register::DigitalFilterSelect3);
+
+	map.r.mode_control_3.IVOLC = 1;
+	update(Register::ModeControl3);
+	map.r.l_ch_input_volume_control.IV = 0x91;
+	update(Register::LchInputVolumeControl);
+	map.r.r_ch_input_volume_control.IV = 0x91;
+	update(Register::RchInputVolumeControl);
+
 }
 
 bool AK4951::reset() {
@@ -215,73 +255,15 @@ void AK4951::speaker_disable() {
 void AK4951::microphone_enable() {
 // map.r.digital_mic.DMIC = 0;
 // update(Register::DigitalMic);
-	
-	const uint_fast8_t mgain = 0b0111;
-	map.r.signal_select_1.MGAIN20 = mgain & 7;
+
 	map.r.signal_select_1.PMMP = 1;
-	map.r.signal_select_1.MPSEL = 1;	// MPWR2 pin
-	map.r.signal_select_1.MGAIN3 = (mgain >> 3) & 1;
 	update(Register::SignalSelect1);
-
-	map.r.signal_select_2.INL = 0b01;	// Lch input signal = LIN2
-	map.r.signal_select_2.INR = 0b01;	// Rch input signal = RIN2
-	map.r.signal_select_2.MICL = 0;		// MPWR = 2.4V
-	update(Register::SignalSelect2);
-
-// map.r.r_ch_mic_gain_setting.MGR = 0x80;	// Microphone sensitivity correction = 0dB.
-// update(Register::RchMicGainSetting);
-/*
-	map.r.timer_select.FRN = ?;
-	map.r.timer_select.FRATT = ?;
-	map.r.timer_select.ADRST = 0b??;
-	update(Register::TimerSelect);
-
-	map.r.alc_timer_select. = ?;
-	update(Register::ALCTimerSelect);
-	map.r.alc_mode_control_1. = ?;
-	map.r.alc_mode_control_1.ALC = 1;
-	update(Register::ALCModeControl1);
-
-	map.r.alc_mode_control_2.REF = ?;
-	update(Register::ALCModeControl2);
-*/
-// map.r.l_ch_input_volume_control.IV = 0xe1;
-// update(Register::LchInputVolumeControl);
-// map.r.r_ch_input_volume_control.IV = 0xe1;
-// update(Register::RchInputVolumeControl);
-/*
-	map.r.auto_hpf_control.STG = 0b00;
-	map.r.auto_hpf_control.SENC = 0b011;
-	map.r.auto_hpf_control.AHPF = 0;
-	update(Register::AutoHPFControl);
-*/
-	map.r.digital_filter_select_1.HPFAD = 1;	// HPF1 (after ADC) = on
-	map.r.digital_filter_select_1.HPFC = 0b11;	// 2336.8 Hz @ fs=48k
-	update(Register::DigitalFilterSelect1);
-/*
-	map.r.digital_filter_select_2.HPF = 0;
-	map.r.digital_filter_select_2.LPF = 0;
-	map.r.digital_filter_select_2.FIL3 = 0;
-	map.r.digital_filter_select_2.EQ0 = 0;
-	map.r.digital_filter_select_2.GN = 0b00;
-	update(Register::DigitalFilterSelect2);
-
-	map.r.digital_filter_select_3.EQ1 = 0;
-	map.r.digital_filter_select_3.EQ2 = 0;
-	map.r.digital_filter_select_3.EQ3 = 0;
-	map.r.digital_filter_select_3.EQ4 = 0;
-	map.r.digital_filter_select_3.EQ5 = 0;
-	update(Register::DigitalFilterSelect3);
-*/
-	map.r.digital_filter_mode.PFSDO = 0;	// ADC (+ 1st order HPF) Output
-	map.r.digital_filter_mode.ADCPF = 1;	// ADC Output (default)
-	update(Register::DigitalFilterMode);
-
+	
 	// ... Set coefficients ...
 
 	map.r.power_management_1.PMADL = 1;		// ADC Lch = Lch input signal
 	map.r.power_management_1.PMADR = 1;		// ADC Rch = Rch input signal
-	map.r.power_management_1.PMPFIL = 0;	// Programmable filter unused, routed around.
+	map.r.power_management_1.PMPFIL = 1;	// Programmable filter unused, routed around.
 	update(Register::PowerManagement1);
 
 	// 1059/fs, 22ms @ 48kHz
@@ -294,8 +276,24 @@ void AK4951::microphone_disable() {
 	map.r.power_management_1.PMPFIL = 0;
 	update(Register::PowerManagement1);
 
+	map.r.signal_select_1.PMMP = 0;
+	update(Register::SignalSelect1);
+
 	map.r.alc_mode_control_1.ALC = 0;
 	update(Register::ALCModeControl1);
+}
+
+void AK4951::microphone_setamp(uint8_t vol) {
+	map.r.signal_select_1.MGAIN20 = vol & 0x07;
+	map.r.signal_select_1.MGAIN3  = (vol >> 3) & 1;
+	update(Register::SignalSelect1);
+}
+
+void AK4951::microphone_setvol(uint8_t vol) {
+	map.r.l_ch_input_volume_control.IV = vol;
+	update(Register::LchInputVolumeControl);
+	map.r.r_ch_input_volume_control.IV = vol;
+	update(Register::RchInputVolumeControl);
 }
 
 reg_t AK4951::read(const address_t reg_address) {

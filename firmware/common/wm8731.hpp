@@ -353,6 +353,14 @@ public:
 		// TODO: Implement
 	}
 
+	void microphone_setamp(uint8_t vol) override {
+		// TODO: Implement
+	}
+
+	void microphone_setvol(uint8_t vol) override {
+		// TODO: Implement
+	}
+
 	// void microphone_mute(const bool mute) {
 	// 	map.r.analog_audio_path_control.mutemic = (mute ? 0 : 1);
 	// 	write(Register::AnalogAudioPathControl);
