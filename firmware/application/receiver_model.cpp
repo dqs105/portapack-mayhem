@@ -295,10 +295,8 @@ size_t ReceiverModel::am_spec_zoom() const {
 }
 
 void ReceiverModel::set_am_spec_zoom(const size_t n) {
-	if(n <= 4 && n > 0) {
-		am_spec_zoom_ = n;
-		update_am_configuration();
-	}
+	am_spec_zoom_ = n;
+	update_am_configuration();
 }
 
 size_t ReceiverModel::nbfm_configuration() const {

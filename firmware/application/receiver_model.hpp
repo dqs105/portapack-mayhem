@@ -101,7 +101,7 @@ private:
 	Mode mode_ { Mode::NarrowbandFMAudio };
 	uint32_t sampling_rate_ { 3072000 };
 	size_t am_config_index = 0;
-	uint8_t am_spec_zoom_ = 1;
+	uint8_t am_spec_zoom_ = 0;
 	size_t nbfm_config_index = 0;
 	size_t wfm_config_index = 0;
 	volume_t headphone_volume_ { -43.0_dB };
