@@ -43,6 +43,7 @@ public:
 
 private:
 	static constexpr size_t baseband_fs = 3072000;
+	static constexpr size_t decim_2_pre_decimation_factor = 1;
 	static constexpr size_t decim_2_decimation_factor = 4;
 	static constexpr size_t channel_filter_decimation_factor = 1;
 	uint8_t spec_zoom = 0;
@@ -63,8 +64,8 @@ private:
 
 	dsp::decimate::FIRC8xR16x24FS4Decim8 decim_0 { };
 	dsp::decimate::FIRC16xR16x32Decim8 decim_1 { };
+	dsp::decimate::FIRAndDecimateComplex decim_2_pre_filter { };
 	dsp::decimate::FIRAndDecimateComplex decim_2 { };
-	dsp::decimate::FIRAndDecimateComplex channel_pre_filter { };
 	dsp::decimate::FIRAndDecimateComplex channel_filter { };
 	uint32_t channel_filter_pass_f = 0;
 	uint32_t channel_filter_stop_f = 0;

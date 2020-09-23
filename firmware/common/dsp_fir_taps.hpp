@@ -222,6 +222,18 @@ constexpr fir_taps_real<32> taps_6k0_decim_1 {
 	} },
 };
 
+// IFIR prototype filter: fs=48000, pass=3000, stop=12000, decim=1, fout=48000 (For spectrum)
+constexpr fir_taps_real<32> taps_6k0_decim_2_pre {
+	.pass_frequency_normalized =  3000.0f / 48000.0f,
+	.stop_frequency_normalized = 12000.0f / 48000.0f,
+	.taps = { {
+		 -102,      0,    176,      0,  -403,      0,    845,      0,
+		-1607,      0,   2945,      0, -5816,      0,  18937,  30048,
+		18937,      0,  -5816,      0,  2945,      0,  -1607,      0,
+		  845,      0,   -403,      0,   176,      0,   -102,      0
+	} },
+};
+
 // IFIR prototype filter: fs=48000, pass=3000, stop=6700, decim=4, fout=12000
 constexpr fir_taps_real<32> taps_6k0_decim_2 {
 	.pass_frequency_normalized = 3000.0f / 48000.0f,
