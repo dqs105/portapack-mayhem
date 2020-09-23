@@ -76,7 +76,7 @@ void AudioSpectrumView::paint(Painter& painter) {
 
 void AudioSpectrumView::on_audio_spectrum(const AudioSpectrum* spectrum) {
 	for (size_t i = 0; i < spectrum->db.size(); i++)
-		audio_spectrum[i] = ((int16_t)spectrum->db[i] - 127) * 256;
+		audio_spectrum[i] = ((int16_t)spectrum->db[i] - 128) * 256;
 	waveform.set_dirty();
 }
 
