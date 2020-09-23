@@ -267,15 +267,18 @@ class WidebandSpectrumConfigMessage : public Message {
 public:
 	constexpr WidebandSpectrumConfigMessage (
 		size_t sampling_rate,
-		size_t trigger
+		size_t trigger,
+		uint8_t gain
 	) : Message { ID::WidebandSpectrumConfig },
 		sampling_rate { sampling_rate },
-		trigger { trigger }
+		trigger { trigger },
+		gain { gain }
 	{
 	}
 
 	size_t sampling_rate { 0 };
 	size_t trigger { 0 };
+	uint8_t gain { 0 };
 };
 
 struct AudioSpectrum {

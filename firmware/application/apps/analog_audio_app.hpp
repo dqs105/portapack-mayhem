@@ -132,15 +132,27 @@ private:
 	};
 	
 	Text text_speed {
-		{ 9 * 8, 0 * 16, 8 * 8, 1 * 16 },
+		{ 8 * 8, 0 * 16, 8 * 8, 1 * 16 },
 		"SP   /63"
 	};
+	
 	NumberField field_speed {
-		{ 12 * 8, 0 * 16 },
+		{ 11 * 8, 0 * 16 },
 		2,
 		{ 0, 63 },
 		1,
 		' ',
+	};
+	Text text_spgain {
+		{ 17 * 8, 0 * 16, 8 * 8, 1 * 16 },
+		"+GAIN   /99"
+	};
+	NumberField field_spgain {
+		{ 23 * 8, 0 * 16 },
+		2,
+		{ 0, 99 },
+		1,
+		' '
 	};
 };
 
@@ -163,6 +175,9 @@ public:
 	uint16_t get_spec_trigger();
 	void set_spec_trigger(uint16_t trigger);
 
+	uint8_t get_spec_gain();
+	void set_spec_gain(uint8_t gain);
+
 private:
 	static constexpr ui::Dim header_height = 3 * 16;
 
@@ -172,6 +187,7 @@ private:
 	size_t spec_bw_index = 0;
 	uint32_t spec_bw = 20000000;
 	uint16_t spec_trigger = 63;
+	uint8_t spec_gain = 0;
 
 	NavigationView& nav_;
 	//bool exit_on_squelch { false };

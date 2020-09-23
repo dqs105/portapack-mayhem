@@ -256,9 +256,16 @@ void set_rds_data(const uint16_t message_length) {
 	send_message(&message);
 }
 
+void set_spectrum(const size_t sampling_rate, const size_t trigger, const uint8_t gain) {
+	const WidebandSpectrumConfigMessage message {
+		sampling_rate, trigger, gain
+	};
+	send_message(&message);
+}
+
 void set_spectrum(const size_t sampling_rate, const size_t trigger) {
 	const WidebandSpectrumConfigMessage message {
-		sampling_rate, trigger
+		sampling_rate, trigger, 0
 	};
 	send_message(&message);
 }

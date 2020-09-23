@@ -101,7 +101,9 @@ SPECOptionsView::SPECOptionsView(
 		&label_config,
 		&options_config,
 		&text_speed,
-		&field_speed
+		&field_speed,
+		&text_spgain,
+		&field_spgain
 	});
 
 	options_config.set_selected_index(view->get_spec_bw_index());
@@ -112,6 +114,11 @@ SPECOptionsView::SPECOptionsView(
 	field_speed.set_value(view->get_spec_trigger());
 	field_speed.on_change = [this, view](int32_t v) {
 		view->set_spec_trigger(v);
+	};
+
+	field_spgain.set_value(view->get_spec_gain());
+	field_spgain.on_change = [this, view](int32_t v) {
+		view->set_spec_gain(v);
 	};
 }
 
@@ -197,7 +204,7 @@ void AnalogAudioView::set_spec_bw(size_t index, uint32_t bw) {
     spec_bw_index = index;
     spec_bw = bw;
 
-    baseband::set_spectrum(bw, spec_trigger);
+    baseband::set_spectrum(bw, spec_trigger, spec_gain);
     receiver_model.set_sampling_rate(bw);
     receiver_model.set_baseband_bandwidth(bw/2);
 }
@@ -209,7 +216,16 @@ uint16_t AnalogAudioView::get_spec_trigger() {
 void AnalogAudioView::set_spec_trigger(uint16_t trigger) {
     spec_trigger = trigger;
 
-    baseband::set_spectrum(spec_bw, spec_trigger);
+    baseband::set_spectrum(spec_bw, spec_trigger, spec_gain);
+}
+
+uint8_t AnalogAudioView::get_spec_gain() {
+	return spec_gain;
+}
+void AnalogAudioView::set_spec_gain(uint8_t gain) {
+	spec_gain = gain;
+	
+	baseband::set_spectrum(spec_bw, spec_trigger, spec_gain);
 }
 
 AnalogAudioView::~AnalogAudioView() {
@@ -373,7 +389,7 @@ void AnalogAudioView::update_modulation(const ReceiverModel::Mode modulation) {
 	baseband::run_image(image_tag);
 
 	if (modulation == ReceiverModel::Mode::SpectrumAnalysis) {
-		baseband::set_spectrum(spec_bw, spec_trigger);
+		baseband::set_spectrum(spec_bw, spec_trigger, spec_gain);
 	}
 
 	const auto is_wideband_spectrum_mode = (modulation == ReceiverModel::Mode::SpectrumAnalysis);
