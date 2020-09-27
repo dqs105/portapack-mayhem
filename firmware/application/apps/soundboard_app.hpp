@@ -70,7 +70,6 @@ private:
 	lfsr_word_t lfsr_v = 1;
 	
 	bool error { false };
-	bool audio_started { false };
 
 	//void show_infos();
 	void start_tx(const uint32_t id);
@@ -87,8 +86,6 @@ private:
 	void show_infos();
 	void hide_infos();
 
-	
-
 	Labels labels {
 		//{ { 0, 20 * 8 + 4 }, "Title:", Color::light_grey() },
 		{ { 0, 180 }, "Key:", Color::light_grey() }
@@ -98,7 +95,8 @@ private:
 		{ { 2 * 8 ,  1 * 8 }, "File: ", Color::light_grey() },
 		{ { 2 * 8 ,  3 * 8 }, "Title:", Color::light_grey() },
 		{ { 2 * 8 ,  5 * 8 }, "Duration:", Color::light_grey() },
-		{ { 4 * 8 , 12 * 8 }, "Volume:", Color::light_grey() },
+		{ { 2 * 8 ,  7 * 8 }, "Sample rate:", Color::light_grey() },
+		{ { 4 * 8 , 14 * 8 }, "Volume:", Color::light_grey() },
 	};
 	Button button_next_page {
 		{ 30 * 7, 25 * 8, 10 * 3, 2 * 14 },
@@ -123,7 +121,7 @@ private:
 		"Empty directory !",
 	};
 	
-		Button button_info_back {
+	Button button_info_back {
 		{ 11 * 8, 18 * 8, 7 * 8, 4 * 8 },
 		"Back"
 	};
@@ -140,14 +138,18 @@ private:
 		{ 11 * 8, 5 * 8, 6 * 8, 16 }
 	};
 
+	Text text_samplerate {
+		{ 14 * 8, 7 * 8, 6 * 8, 16 }
+	};
+
 	Checkbox check_audio {
-		{ 2 * 8, 8 * 8 },
+		{ 2 * 8, 10 * 8 },
 		16,
 		"Enable audio out"
 	};
 
 	NumberField field_volume {
-		{ 11 * 8, 12 * 8 },
+		{ 11 * 8, 14 * 8 },
 		2,
 		{ 0, 99 },
 		1,
@@ -167,7 +169,7 @@ private:
 	};
 	
 	Checkbox check_random {
-		{ 10 * 8, 25 * 8 + 4 },
+		{ 10 * 7, 25 * 8 + 4 },
 		6,
 		"Random"
 	};

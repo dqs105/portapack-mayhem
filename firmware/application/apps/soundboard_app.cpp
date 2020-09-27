@@ -44,7 +44,6 @@ void SoundBoardView::stop() {
 	baseband::replay_stop();
 	
 	audio::output::stop();
-	audio_started = false;
 	
 	transmitter_model.disable();
 	tx_view.set_transmitting(false);
@@ -152,6 +151,7 @@ void SoundBoardView::show_infos() {
 	text_filename.set(file_list[menu_view.highlighted_index()].string().substr(0, 23));
 	text_duration.set(to_string_time_ms(reader->ms_duration()));
 	text_title.set(reader->title().substr(0, 22));
+	text_samplerate.set(to_string_dec_uint(reader->sample_rate()));
 	
 	menu_view.hidden(true);
 	page_info.hidden(true);
@@ -162,6 +162,7 @@ void SoundBoardView::show_infos() {
 	labels_info.hidden(false);
 	text_duration.hidden(false);
 	text_title.hidden(false);
+	text_samplerate.hidden(false);
 	check_audio.hidden(false);
 	field_volume.hidden(false);
 	button_info_back.hidden(false);
@@ -175,6 +176,7 @@ void SoundBoardView::hide_infos() {
 	text_filename.hidden(true);
 	text_duration.hidden(true);
 	text_title.hidden(true);
+	text_samplerate.hidden(true);
 	check_audio.hidden(true);
 	field_volume.hidden(true);
 	button_info_back.hidden(true);
@@ -296,6 +298,7 @@ SoundBoardView::SoundBoardView(
 		&text_filename,
 		&text_title,
 		&text_duration,
+		&text_samplerate,
 		&check_audio,
 		&field_volume,
 		&button_info_back,
@@ -312,6 +315,7 @@ SoundBoardView::SoundBoardView(
 	text_filename.hidden(true);
 	text_title.hidden(true);
 	text_duration.hidden(true);
+	text_samplerate.hidden(true);
 	check_audio.hidden(true);
 	button_info_back.hidden(true);
 	field_volume.hidden(true);
