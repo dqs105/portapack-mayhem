@@ -50,13 +50,6 @@ public:
 private:
 	NavigationView& nav_;
 	
-	enum tx_modes {
-		NORMAL = 0,
-		RANDOM
-	};
-	
-	tx_modes tx_mode = NORMAL;
-	
 	uint32_t playing_id { };
 	
 	std::vector<std::filesystem::path> file_list { };
@@ -66,7 +59,10 @@ private:
 	std::unique_ptr<ReplayThread> replay_thread { };
 	bool ready_signal { false };
 	lfsr_word_t lfsr_v = 1;
-	
+
+	bool error { false };
+	bool audio_started { false };
+
 	//void show_infos();
 	void start_tx(const uint32_t id);
 	//void on_ctcss_changed(uint32_t v);
@@ -78,10 +74,22 @@ private:
 	void on_tx_progress(const uint32_t progress);
 	void refresh_list();
 	void on_select_entry();
+
+	void show_infos();
+	void hide_infos();
+
+	
 	
 	Labels labels {
 		//{ { 0, 20 * 8 + 4 }, "Title:", Color::light_grey() },
 		{ { 0, 180 }, "Key:", Color::light_grey() }
+	};
+
+	Labels labels_info {
+		{ { 2 * 8 ,  1 * 8 }, "File: ", Color::light_grey() },
+		{ { 2 * 8 ,  3 * 8 }, "Title:", Color::light_grey() },
+		{ { 2 * 8 ,  5 * 8 }, "Duration:", Color::light_grey() },
+		{ { 4 * 8 , 12 * 8 }, "Volume:", Color::light_grey() },
 	};
 	
 	MenuView menu_view {
@@ -93,13 +101,36 @@ private:
 		"Empty directory !",
 	};
 	
-	/*Text text_title {
-		{ 6 * 8, 20 * 8 + 4, 15 * 8, 16 }
-	};*/
+	Button button_info_back {
+		{ 11 * 8, 18 * 8, 7 * 8, 4 * 8 },
+		"Back"
+	};
+
+	Text text_filename {
+		{ 7 * 8, 1 * 8, 15 * 8, 16 }
+	};
 	
-	/*Text text_duration {
-		{ 22 * 8, 20 * 8 + 4, 6 * 8, 16 }
-	};*/
+	Text text_title {
+		{ 8 * 8, 3 * 8, 15 * 8, 16 }
+	};
+	
+	Text text_duration {
+		{ 11 * 8, 5 * 8, 6 * 8, 16 }
+	};
+
+	Checkbox check_audio {
+		{ 2 * 8, 8 * 8 },
+		16,
+		"Enable audio out"
+	};
+
+	NumberField field_volume {
+		{ 11 * 8, 12 * 8 },
+		2,
+		{ 0, 99 },
+		1,
+		' ',
+	};
 	
 	OptionsField options_tone_key {
 		{ 32 , 180 },
