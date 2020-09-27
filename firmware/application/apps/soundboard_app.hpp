@@ -50,7 +50,16 @@ public:
 private:
 	NavigationView& nav_;
 	
+	enum tx_modes {
+		NORMAL = 0,
+		RANDOM
+	};
+	
+	tx_modes tx_mode = NORMAL;
+	
 	uint32_t playing_id { };
+	uint32_t page = 1;
+	uint32_t c_page = 1;
 	
 	std::vector<std::filesystem::path> file_list { };
 
@@ -59,7 +68,7 @@ private:
 	std::unique_ptr<ReplayThread> replay_thread { };
 	bool ready_signal { false };
 	lfsr_word_t lfsr_v = 1;
-
+	
 	bool error { false };
 	bool audio_started { false };
 
@@ -79,7 +88,7 @@ private:
 	void hide_infos();
 
 	
-	
+
 	Labels labels {
 		//{ { 0, 20 * 8 + 4 }, "Title:", Color::light_grey() },
 		{ { 0, 180 }, "Key:", Color::light_grey() }
@@ -91,7 +100,20 @@ private:
 		{ { 2 * 8 ,  5 * 8 }, "Duration:", Color::light_grey() },
 		{ { 4 * 8 , 12 * 8 }, "Volume:", Color::light_grey() },
 	};
-	
+	Button button_next_page {
+		{ 30 * 7, 25 * 8, 10 * 3, 2 * 14 },
+		"=>"
+	};
+
+	Button button_prev_page {
+		{ 17 * 10, 25 * 8, 10 * 3, 2 * 14 },
+		"<="
+	};
+
+	Text page_info {
+		{ 0, 30 * 8 - 4, 30 * 8, 16 }
+	};
+
 	MenuView menu_view {
 		{ 0, 0, 240, 175 },
 		true
@@ -101,7 +123,7 @@ private:
 		"Empty directory !",
 	};
 	
-	Button button_info_back {
+		Button button_info_back {
 		{ 11 * 8, 18 * 8, 7 * 8, 4 * 8 },
 		"Back"
 	};

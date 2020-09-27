@@ -40,7 +40,7 @@ bool SoundBoardView::is_active() const {
 void SoundBoardView::stop() {
 	if (is_active())
 		replay_thread.reset();
-	
+
 	baseband::replay_stop();
 	
 	audio::output::stop();
@@ -64,12 +64,17 @@ void SoundBoardView::handle_replay_thread_done(const uint32_t return_code) {
 			menu_view.set_highlighted(playing_id);
 			show_infos();
 			start_tx(playing_id);
+			return;
 		} else if (check_loop.value()) {
 			start_tx(playing_id);
+			return;
 		}
 	} else if (return_code == ReplayThread::READ_ERROR) {
 		file_error();
 	}
+	if(menu_view.hidden())
+		button_info_back.hidden(false);
+	set_dirty();
 }
 
 void SoundBoardView::set_ready() {
@@ -130,7 +135,7 @@ void SoundBoardView::start_tx(const uint32_t id) {
 	transmitter_model.set_sampling_rate(1536000);
 	transmitter_model.set_baseband_bandwidth(1750000);
 	transmitter_model.enable();
-
+	
 	if(check_audio.value())
 		audio::output::start();
 	
@@ -149,6 +154,10 @@ void SoundBoardView::show_infos() {
 	text_title.set(reader->title().substr(0, 22));
 	
 	menu_view.hidden(true);
+	page_info.hidden(true);
+	button_next_page.hidden(true);
+	button_prev_page.hidden(true);
+
 	text_filename.hidden(false);
 	labels_info.hidden(false);
 	text_duration.hidden(false);
@@ -156,6 +165,8 @@ void SoundBoardView::show_infos() {
 	check_audio.hidden(false);
 	field_volume.hidden(false);
 	button_info_back.hidden(false);
+	progressbar.hidden(false);
+
 	set_dirty();
 }
 
@@ -167,8 +178,13 @@ void SoundBoardView::hide_infos() {
 	check_audio.hidden(true);
 	field_volume.hidden(true);
 	button_info_back.hidden(true);
+	progressbar.hidden(true);
 
 	menu_view.hidden(false);
+	button_next_page.hidden(false);
+	button_prev_page.hidden(false);
+	page_info.hidden(false);
+
 	menu_view.focus();
 	set_dirty();
 }
@@ -187,8 +203,10 @@ void SoundBoardView::refresh_list() {
 	auto reader = std::make_unique<WAVFileReader>();
 	
 	file_list.clear();
+	c_page = page;
 	
 	// List directories and files, put directories up top
+	uint32_t count = 0;
 	for (const auto& entry : std::filesystem::directory_iterator(u"WAV", u"*")) {
 		if (std::filesystem::is_regular_file(entry.status())) {
 			if (entry.path().string().length()) {
@@ -204,22 +222,33 @@ void SoundBoardView::refresh_list() {
 						if ((reader->channels() == 1) && (reader->bits_per_sample() == 8)) {
 							//sounds[c].ms_duration = reader->ms_duration();
 							//sounds[c].path = u"WAV/" + entry.path().native();
-							file_list.push_back(entry.path());
-							if (file_list.size() == 100)
-								break;
+							if (count >= (page - 1) * 100 && count < page * 100){
+								file_list.push_back(entry.path());
+								if (file_list.size() == 100){
+									page++;
+									break;
+								}
+							}
+							count++;
 						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	if (!file_list.size()) {
 		error = true;
 		// Hide widgets, show warning
-		menu_view.hidden(true);
-		text_empty.hidden(false);
-		set_dirty();
+		if (page == 1){
+			menu_view.hidden(true);
+			text_empty.hidden(false);
+			set_dirty();
+		}else{
+			page = 1;
+			refresh_list();
+			return;
+		}
 	} else {
 		error = false;
 		// Hide warning, show widgets
@@ -242,8 +271,13 @@ void SoundBoardView::refresh_list() {
 				}
 			});
 		}
-		
+
+		page_info.set("Page: " + to_string_dec_uint(c_page) + "    Sounds: " + to_string_dec_uint(file_list.size()));
 		menu_view.set_highlighted(0);	// Refresh
+	}
+
+	if (file_list.size() < 100){
+		page = 1;
 	}
 }
 
@@ -266,9 +300,12 @@ SoundBoardView::SoundBoardView(
 		&field_volume,
 		&button_info_back,
 		&progressbar,
+		&page_info,
 		&check_loop,
 		&check_random,
-		&tx_view,
+		&button_prev_page,
+		&button_next_page,
+		&tx_view
 	});
 
 	labels_info.hidden(true);
@@ -278,14 +315,27 @@ SoundBoardView::SoundBoardView(
 	check_audio.hidden(true);
 	button_info_back.hidden(true);
 	field_volume.hidden(true);
+	progressbar.hidden(true);
+
 	
 	refresh_list();
+
+	button_next_page.on_select = [this](Button&) {
+		this->refresh_list();
+	};
+
+	button_prev_page.on_select = [this](Button&) {
+		if (c_page == 1) return;
+		if (c_page == 2) page = 1;
+		page = c_page - 1;
+		refresh_list();
+	};
 	
 	//text_title.set(to_string_dec_uint(file_list.size()));
 	
 	tone_keys_populate(options_tone_key);
 	options_tone_key.set_selected_index(0);
-
+	
 	check_audio.set_value(false);
 
 	field_volume.set_value((receiver_model.headphone_volume() - audio::headphone::volume_range().max).decibel() + 99);
@@ -303,7 +353,7 @@ SoundBoardView::SoundBoardView(
 			transmitter_model.set_tuning_frequency(f);
 		};
 	};
-
+	
 	button_info_back.on_select = [this](Button&) {
 		hide_infos();
 	};
@@ -318,8 +368,8 @@ SoundBoardView::SoundBoardView(
 	
 	tx_view.on_stop = [this]() {
 		tx_view.set_transmitting(false);
-		hide_infos();
 		stop();
+		hide_infos();
 	};
 
 	audio::set_rate(audio::Rate::Hz_48000);
