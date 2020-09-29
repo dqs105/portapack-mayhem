@@ -65,7 +65,7 @@ public:
 
 private:
 	void toggle();
-	//void toggle_pitch_rssi();
+	void toggle_pitch_rssi();
 	Optional<File::Error> write_metadata_file(const std::filesystem::path& filename);
 
 	void on_tick_second();
@@ -74,7 +74,7 @@ private:
 	void handle_capture_thread_done(const File::Error error);
 	void handle_error(const File::Error error);
 
-	//bool pitch_rssi_enabled = false;
+	bool pitch_rssi_enabled = false;
 	const std::filesystem::path filename_stem_pattern;
 	const FileType file_type;
 	const size_t write_size;
@@ -86,12 +86,12 @@ private:
 		Color::black()
 	};
 	
-	/*ImageButton button_pitch_rssi {
-		{ 2, 0 * 16, 3 * 8, 1 * 16 },
+	ImageButton button_pitch_rssi {
+		{ 3 * 8, 0 * 16, 3 * 8, 1 * 16 },
 		&bitmap_rssipwm,
 		Color::orange(),
 		Color::black()
-	};*/
+	};
 
 	ImageButton button_record {
 		//{ 4 * 8, 0 * 16, 2 * 8, 1 * 16 },
