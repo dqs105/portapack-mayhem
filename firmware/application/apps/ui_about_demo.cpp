@@ -30,7 +30,7 @@
 #include "audio.hpp"
 #include "event_m0.hpp"
 
-#include "ui_about.hpp"
+#include "ui_about_demo.hpp"
 #include "touch.hpp"
 #include "sine_table.hpp"
 
@@ -48,18 +48,22 @@ namespace ui {
 	
 void AboutView::on_show() {
 	transmitter_model.set_tuning_frequency(1337000000);		// TODO: Change
+	transmitter_model.set_sampling_rate(1536000);
+	/*
 	transmitter_model.set_baseband_configuration({
 		.mode = 0,
 		.sampling_rate = 1536000,
 		.decimation_factor = 1,
 	});
+	*/
 	transmitter_model.set_rf_amp(true);
 	transmitter_model.set_lna(40);
 	transmitter_model.set_vga(40);
 	transmitter_model.set_baseband_bandwidth(1750000);
 	transmitter_model.enable();
 	
-	baseband::set_audiotx_data(32, 50, false, 0);
+	baseband::set_audiotx_config(32, 50, 0, 0);
+	baseband::set_sample_rate(1536000);
 	
 	//audio::headphone::set_volume(volume_t::decibel(0 - 99) + audio::headphone::volume_range().max);
 }
@@ -186,16 +190,16 @@ void AboutView::draw_demoglyph(ui::Point p, char ch, ui::Color * pal) {
 	if (che < 0xFF) {
 		che = (che * 128) + 48;		// Start in bitmap
 
-		il = (180 * p.y) + p.x;		// Start il framebuffer
+		il = (180 * p.y()) + p.x();		// Start il framebuffer
 		
 		for (y = 0; y < 16; y++) {
-			if (p.y + y >= 72) break;					// Over bottom of framebuffer, abort
-			if (p.y + y >= 0) {
+			if (p.y() + y >= 72) break;					// Over bottom of framebuffer, abort
+			if (p.y() + y >= 0) {
 				for (x = 0; x < 8; x++) {
 					c = demofont_bin[x+(y*8)+che];		// Split byte in 2 4BPP pixels
 					cl = c >> 4;
 					cr = c & 0x0F;
-					lbx = p.x + (x*2);
+					lbx = p.x() + (x*2);
 					if (cl && (lbx < 180) && (lbx >= 0)) framebuffer[il] = pal[cl];
 					lbx++;
 					il++;
@@ -364,15 +368,15 @@ AboutView::AboutView(
 	
 	baseband::run_image(portapack::spi_flash::image_tag_audio_tx);
 	
-	add_children({ {
+	add_children({
 		&text_title,
 		&text_firmware,
 		&text_cpld_hackrf,
 		&text_cpld_hackrf_status,
 		&button_ok,
-	} });
+	});
 	
-	if( cpld_hackrf_verify_eeprom() ) {
+	if( hackrf::cpld::verify_eeprom() ) {
 		text_cpld_hackrf_status.set(" OK");
 	} else {
 		text_cpld_hackrf_status.set("BAD");
