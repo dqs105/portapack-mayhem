@@ -177,13 +177,14 @@ void kill_afsk() {
 }
 
 void set_audiotx_config(const uint32_t divider, const float deviation_hz, const float audio_gain,
-					const uint32_t tone_key_delta) {
+					const uint32_t tone_key_delta, const uint8_t speed) {
 	const AudioTXConfigMessage message {
 		divider,
 		deviation_hz,
 		audio_gain,
 		tone_key_delta,
-		(float)persistent_memory::tone_mix() / 100.0f
+		(float)persistent_memory::tone_mix() / 100.0f,
+		speed,
 	};
 	send_message(&message);
 }

@@ -32,6 +32,7 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 	if (!configured) return;
 
 	ai = 0;
+	as = 0;
 	
 	// Zero-order hold (poop)
 	for (size_t i = 0; i < buffer.count; i++) {
@@ -105,12 +106,12 @@ void AudioTXProcessor::on_message(const Message* const message) {
 }
 
 void AudioTXProcessor::audio_config(const AudioTXConfigMessage& message) {
-	fm_delta = message.deviation_hz * (0xFFFFFFULL / baseband_fs);
+	fm_delta = message.deviation_hz * (0xFFFFFFULL / baseband_fs_base);
 	tone_gen.configure(message.tone_key_delta, message.tone_key_mix_weight);
 	progress_interval_samples = message.divider;
 	resample_acc = 0;
-	audio_output.configure(false);
-	as = 0;
+	audio_output.configure(audio_48k_hpf_30hz_config);
+	baseband_fs = (size_t)((float)baseband_fs_base / ((float)message.speed / 100.0));
 }
 
 void AudioTXProcessor::replay_config(const ReplayConfigMessage& message) {

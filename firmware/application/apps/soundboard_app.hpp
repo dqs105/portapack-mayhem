@@ -96,7 +96,8 @@ private:
 		{ { 2 * 8 ,  3 * 8 }, "Title:", Color::light_grey() },
 		{ { 2 * 8 ,  5 * 8 }, "Duration:", Color::light_grey() },
 		{ { 2 * 8 ,  7 * 8 }, "Sample rate:", Color::light_grey() },
-		{ { 4 * 8 , 14 * 8 }, "Volume:", Color::light_grey() },
+		{ { 4 * 8 , 14 * 8 - 4 }, "Volume:", Color::light_grey() },
+		{ { 2 * 8 , 16 * 8 }, "Speed:   %", Color::light_grey() },
 	};
 	Button button_next_page {
 		{ 30 * 7, 25 * 8, 10 * 3, 2 * 14 },
@@ -122,7 +123,7 @@ private:
 	};
 	
 	Button button_info_back {
-		{ 11 * 8, 18 * 8, 7 * 8, 4 * 8 },
+		{ 16 * 8, 18 * 8, 7 * 8, 4 * 8 },
 		"Back"
 	};
 
@@ -149,9 +150,17 @@ private:
 	};
 
 	NumberField field_volume {
-		{ 11 * 8, 14 * 8 },
+		{ 11 * 8, 14 * 8 - 4 },
 		2,
 		{ 0, 99 },
+		1,
+		' ',
+	};
+
+	NumberField field_speed {
+		{ 8 * 8, 16 * 8 },
+		3,
+		{ 50, 200 },
 		1,
 		' ',
 	};

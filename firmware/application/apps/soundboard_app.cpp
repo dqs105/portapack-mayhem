@@ -112,7 +112,21 @@ void SoundBoardView::start_tx(const uint32_t id) {
 	//button_play.set_bitmap(&bitmap_stop);
 	
 	sample_rate = reader->sample_rate();
-	
+
+	// It's terrible. System transmitting threading seems to be limited to around 2478000Hz.
+	transmitter_model.set_sampling_rate(1536000);
+	transmitter_model.set_baseband_bandwidth(1750000);
+
+	baseband::set_audiotx_config(
+		1536000 / 20,		// Update vu-meter at 20Hz
+		transmitter_model.channel_bandwidth(),
+		0,	// Gain is unused
+		TONES_F2D(tone_key_frequency(tone_key_index), 1536000),
+		field_speed.value()
+	);
+	baseband::set_sample_rate(sample_rate);
+
+	// Put replay thread to be initialized at last. maybe meaningful.
 	replay_thread = std::make_unique<ReplayThread>(
 		std::move(reader),
 		read_size, buffer_count,
@@ -123,16 +137,6 @@ void SoundBoardView::start_tx(const uint32_t id) {
 		}
 	);
 	
-	baseband::set_audiotx_config(
-		1536000 / 20,		// Update vu-meter at 20Hz
-		transmitter_model.channel_bandwidth(),
-		0,	// Gain is unused
-		TONES_F2D(tone_key_frequency(tone_key_index), 1536000)
-	);
-	baseband::set_sample_rate(sample_rate);
-	
-	transmitter_model.set_sampling_rate(1536000);
-	transmitter_model.set_baseband_bandwidth(1750000);
 	transmitter_model.enable();
 	
 	if(check_audio.value())
@@ -165,6 +169,7 @@ void SoundBoardView::show_infos() {
 	text_samplerate.hidden(false);
 	check_audio.hidden(false);
 	field_volume.hidden(false);
+	field_speed.hidden(false);
 	button_info_back.hidden(false);
 	progressbar.hidden(false);
 
@@ -179,6 +184,7 @@ void SoundBoardView::hide_infos() {
 	text_samplerate.hidden(true);
 	check_audio.hidden(true);
 	field_volume.hidden(true);
+	field_speed.hidden(true);
 	button_info_back.hidden(true);
 	progressbar.hidden(true);
 
@@ -301,6 +307,7 @@ SoundBoardView::SoundBoardView(
 		&text_samplerate,
 		&check_audio,
 		&field_volume,
+		&field_speed,
 		&button_info_back,
 		&progressbar,
 		&page_info,
@@ -319,6 +326,7 @@ SoundBoardView::SoundBoardView(
 	check_audio.hidden(true);
 	button_info_back.hidden(true);
 	field_volume.hidden(true);
+	field_speed.hidden(true);
 	progressbar.hidden(true);
 
 	
@@ -347,6 +355,8 @@ SoundBoardView::SoundBoardView(
 		receiver_model.set_headphone_volume(volume_t::decibel(v - 99) + audio::headphone::volume_range().max); 
 	};
 	receiver_model.set_headphone_volume(receiver_model.headphone_volume());
+
+	field_speed.set_value(100);
 	
 	check_loop.set_value(false);
 	check_random.set_value(false);

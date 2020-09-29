@@ -37,9 +37,10 @@ public:
 	void on_message(const Message* const msg) override;
 
 private:
-	static constexpr size_t baseband_fs = 1536000;
+	size_t baseband_fs = 1536000;
+	static constexpr size_t baseband_fs_base = 1536000;
 	
-	BasebandThread baseband_thread { baseband_fs, this, NORMALPRIO + 20, baseband::Direction::Transmit };
+	BasebandThread baseband_thread { baseband_fs_base, this, NORMALPRIO + 20, baseband::Direction::Transmit };
 	
 	std::unique_ptr<StreamOutput> stream { };
 	
