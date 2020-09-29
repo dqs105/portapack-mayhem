@@ -31,6 +31,8 @@ using namespace portapack;
 #include "crc.hpp"
 #include "string_format.hpp"
 
+#include "ui_receiver.hpp"
+
 namespace ert {
 
 namespace format {
@@ -94,7 +96,11 @@ void RecentEntriesTable<ERTRecentEntries>::draw(
 	painter.draw_string(target_rect.location(), style, line);
 }
 
-ERTAppView::ERTAppView(NavigationView&) {
+void ERTAppView::update_freq(rf::Frequency f) {
+	receiver_model.set_tuning_frequency(f);
+//	portapack::persistent_memory::set_tuned_frequency(f);	// Maybe not ?
+}
+ERTAppView::ERTAppView(NavigationView& nav) {
 	baseband::run_image(portapack::spi_flash::image_tag_ert);
 
 	add_children({
@@ -103,17 +109,27 @@ ERTAppView::ERTAppView(NavigationView&) {
 		&field_vga,
 		&rssi,
 		&recent_entries_view,
+		&field_frequency,
 	});
 
-	radio::enable({
-		initial_target_frequency,
-		sampling_rate,
-		baseband_bandwidth,
-		rf::Direction::Receive,
-		receiver_model.rf_amp(),
-		static_cast<int8_t>(receiver_model.lna()),
-		static_cast<int8_t>(receiver_model.vga()),
-	});
+	receiver_model.set_tuning_frequency(initial_target_frequency);
+	receiver_model.set_sampling_rate(sampling_rate);
+	receiver_model.set_baseband_bandwidth(baseband_bandwidth);
+	receiver_model.enable();
+
+	field_frequency.set_value(receiver_model.tuning_frequency());
+	field_frequency.set_step(receiver_model.frequency_step());
+	field_frequency.on_change = [this](rf::Frequency f) {
+		update_freq(f);
+	};
+	field_frequency.on_edit = [this, &nav]() {
+		// TODO: Provide separate modal method/scheme?
+		auto new_view = nav.push<FrequencyKeypadView>(receiver_model.tuning_frequency());
+		new_view->on_changed = [this](rf::Frequency f) {
+			update_freq(f);
+			field_frequency.set_value(f);
+		};
+	};
 
 	logger = std::make_unique<ERTLogger>();
 	if( logger ) {
