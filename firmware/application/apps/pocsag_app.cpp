@@ -120,7 +120,7 @@ POCSAGAppView::POCSAGAppView(NavigationView& nav) {
 	options_paging_mode.on_change = [this](size_t, OptionsField::value_t v) {
 		paging_mode = options_paging_mode.selected_index_value();
 	};
-	options_paging_mode.set_selected_index(1); // COM
+	options_paging_mode.set_selected_index(0); // COM
 
 	check_ignore.set_value(ignore);
 	check_ignore.on_select = [this](Checkbox&, bool v) {
@@ -193,7 +193,7 @@ void POCSAGAppView::on_packet(const POCSAGPacketMessage * message) {
 			
 			last_address = pocsag_state.address;
 		} else if (pocsag_state.out_type >= MESSAGE) {
-			if(decode_mode == 0) { // AUTO
+			if(decode_mode == 0) { // AUTO 
 				if(pocsag_state.out_type == MESSAGE)
 					goto message_dec;
 				if(pocsag_state.out_type > NUMBERIC)
@@ -202,7 +202,7 @@ void POCSAGAppView::on_packet(const POCSAGPacketMessage * message) {
 			if(decode_mode == 1) { // Alpha
 				goto message_dec;
 			}
-			if(decode_mode == 2) { // Numeric
+			if(decode_mode == 2 || decode_mode == 3) { // Numeric
 				goto numeric_dec;
 			}
 numeric_dec:
@@ -221,7 +221,7 @@ numeric_dec:
 				logger->log_decoded(message->packet, to_string_dec_uint(pocsag_state.address) +
 													" F" + to_string_dec_uint(pocsag_state.function) +
 													" Numberic: " + pocsag_state.numout);
-			if(pocsag_state.out_type == NUMBERIC || decode_mode == 2)
+			if((pocsag_state.out_type == NUMBERIC && decode_mode != 3) || decode_mode == 2)
 				goto dec_done;
 			else if(paging_mode)
 				console.write(" // A: ");

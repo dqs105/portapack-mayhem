@@ -101,7 +101,8 @@ private:
 		{
 			{ "AUTO ", 0},
 			{ "ALPHA", 1},
-			{ "NUM  ", 2}
+			{ "NUM  ", 2},
+			{ "BOTH ", 3}
 		}
 	};
 	OptionsField options_phase {
@@ -116,8 +117,8 @@ private:
 		{ 6 * 8, 21 },
 		3,
 		{
+			{ "COM", 1 },
 			{ "SEP", 0 },
-			{ "COM", 1 }
 		}
 	};
 	Checkbox check_log {

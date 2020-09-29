@@ -318,6 +318,9 @@ void pocsag_decode_batch(const POCSAGPacket& batch, POCSAGState * const state) {
 
 	if(errors > 1) {
 		state->out_type = ENUMBERIC; // Have non-printable chars. Maybe NUMBERIC mode?
+		if(output_num[0] == ' ') { // Whoa. Starting with 0xC, then it should be numberic. (or not?)
+			state->out_type = NUMBERIC;
+		}
 	}
 	if(errors > 5) {
 		state->out_type = NUMBERIC; // Too many non-printable chars. Put it in numberic mode!
