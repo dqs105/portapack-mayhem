@@ -218,6 +218,8 @@ void Path::update() {
 	/* Move to the final state by turning on required signals. */
 	const auto config = get_config(direction, band, rf_amp);
 	config.apply();
+	gpio_cpld_trx_mode.write((direction == Direction::Transmit ? 1 : 0));
+
 }
 
 } /* path */

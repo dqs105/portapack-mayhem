@@ -111,6 +111,7 @@ void set_direction(const rf::Direction new_direction) {
 	// Hack to fix the CPLD (clocking ?) bug: toggle CPLD SRAM overlay depending on new direction
 	// Use CPLD's EEPROM config when transmitting
 	// Use the SRAM overlay when receiving
+	/*
 	if (direction != new_direction) {
 		if (new_direction == rf::Direction::Transmit) {
 			hackrf::cpld::init_from_eeprom();
@@ -120,7 +121,7 @@ void set_direction(const rf::Direction new_direction) {
 			}
 		}
 	}
-	
+	*/
 	direction = new_direction;
 	
 	second_if.set_mode((direction == rf::Direction::Transmit) ? max2837::Mode::Transmit : max2837::Mode::Receive);

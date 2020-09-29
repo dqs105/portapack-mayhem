@@ -50,6 +50,8 @@ constexpr GPIO gpio_not_mix_bypass = gpio[GPIO1_0];
 constexpr GPIO gpio_rx = gpio[GPIO5_5];
 constexpr GPIO gpio_tx = gpio[GPIO5_15];
 
+constexpr GPIO gpio_cpld_trx_mode = gpio[GPIO0_12];
+
 constexpr GPIO gpio_lp = gpio[GPIO2_10];
 constexpr GPIO gpio_hp = gpio[GPIO2_0];
 
