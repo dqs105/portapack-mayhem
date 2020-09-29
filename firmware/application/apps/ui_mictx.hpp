@@ -236,7 +236,7 @@ private:
 
 	Checkbox check_rxactive {
 		{ 3 * 8, ( 21 * 8 ) - 4 },
-		8,
+		18,
 		"RX audio listening",
 		false
 	};
