@@ -106,6 +106,7 @@ void RecordView::set_sampling_rate(const size_t new_sampling_rate) {
 		baseband::set_sample_rate(sampling_rate);
 
 		button_record.hidden(sampling_rate == 0);
+		button_pitch_rssi.hidden(sampling_rate == 0);
 		text_record_filename.hidden(sampling_rate == 0);
 		text_record_dropped.hidden(sampling_rate == 0);
 		text_time_available.hidden(sampling_rate == 0);
