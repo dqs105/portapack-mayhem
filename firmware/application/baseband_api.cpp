@@ -177,7 +177,7 @@ void kill_afsk() {
 }
 
 void set_audiotx_config(const uint32_t divider, const float deviation_hz, const float audio_gain,
-					const uint32_t tone_key_delta, const uint8_t speed) {
+					const uint32_t tone_key_delta, const uint16_t speed) {
 	const AudioTXConfigMessage message {
 		divider,
 		deviation_hz,

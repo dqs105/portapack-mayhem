@@ -37,8 +37,8 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 	// Zero-order hold (poop)
 	for (size_t i = 0; i < buffer.count; i++) {
 		resample_acc += resample_inc;
-		if (resample_acc >= 0x10000) {
-			resample_acc -= 0x10000;
+		if (resample_acc >= 0x1000000) {
+			resample_acc -= 0x1000000;
 			if (stream) {
 				stream->read(&audio_sample, 1);
 				bytes_read++;
@@ -127,7 +127,7 @@ void AudioTXProcessor::replay_config(const ReplayConfigMessage& message) {
 }
 
 void AudioTXProcessor::samplerate_config(const SamplerateConfigMessage& message) {
-	resample_inc = (((uint64_t)message.sample_rate) << 16) / baseband_fs;	// 16.16 fixed point message.sample_rate
+	resample_inc = (((uint64_t)message.sample_rate) << 24) / baseband_fs;	// 16.16 fixed point message.sample_rate
 }
 
 int main() {

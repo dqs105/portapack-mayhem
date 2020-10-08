@@ -342,6 +342,10 @@ SoundBoardView::SoundBoardView(
 		page = c_page - 1;
 		refresh_list();
 	};
+
+	field_speed.on_select = [this](NumberField&) {
+		field_speed.set_value(100);
+	};
 	
 	//text_title.set(to_string_dec_uint(file_list.size()));
 	

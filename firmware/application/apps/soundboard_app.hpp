@@ -160,7 +160,7 @@ private:
 	NumberField field_speed {
 		{ 8 * 8, 16 * 8 },
 		3,
-		{ 50, 200 },
+		{ 25, 400 },
 		1,
 		' ',
 	};
