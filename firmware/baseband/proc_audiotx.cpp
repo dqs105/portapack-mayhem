@@ -58,7 +58,7 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 
 		if (!as) {
 				as = 31;
-				audio_buffer.p[ai++] = (int16_t)(audio_sample - 0x80) << 7;
+				audio_buffer.p[ai++] = (int16_t)(audio_sample - 0x80) << 8;
 		} else {
 			as--;
 		}
