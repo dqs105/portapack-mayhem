@@ -62,13 +62,14 @@ bool WAVFileReader::open(const std::filesystem::path& path) {
 						continue;
 					}
 					search_limit++;
-					if(search_limit > 255)
+					if(search_limit > 1024)
 						break;
 					continue;
 				}
 				if(tag_state < 4) {
 					if(ch != tag_list[tag_state]) {
-						break;
+						tag_state = 0;
+						continue;
 					}
 					tag_state++;
 					continue;
@@ -93,8 +94,12 @@ bool WAVFileReader::open(const std::filesystem::path& path) {
 					else
 						i = 0;
 				}
-				if (search_limit == tag_length)
-					break;
+				if (search_limit == tag_length) {
+					tag_state = 0;
+					search_limit = 0;
+					tag_length = 0;
+					continue;
+				}
 				else
 					search_limit++;
 			}
