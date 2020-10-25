@@ -53,7 +53,8 @@ private:
 	std::array<complex16_t, 256> spectrum { };
 
 	size_t phase = 0, trigger = 127;
-	float sp_gain = 1.0;
+	int8_t sp_gain = 1;
+	complex32_t offset { 0, 0 };
 };
 
 #endif/*__PROC_WIDEBAND_SPECTRUM_H__*/

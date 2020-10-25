@@ -38,21 +38,42 @@ void WidebandSpectrum::execute(const buffer_c8_t& buffer) {
 		std::fill(spectrum.begin(), spectrum.end(), 0);
 	}
 
-	for(size_t i=0; i<spectrum.size(); i++) {
-		// TODO: Removed window-presum windowing, due to lack of available code RAM.
-		// TODO: Apply window to improve spectrum bin sidelobes.
-		spectrum[i] += buffer.p[i +    0];
-		spectrum[i] += buffer.p[i + 1024];
-		spectrum[i].real((float)spectrum[i].real() * sp_gain);
-		spectrum[i].imag((float)spectrum[i].imag() * sp_gain);
+	// Combine all buffer data.
+	for(size_t k = 0; k < 2048 / spectrum.size(); k++) {
+		for(size_t i = 0; i < spectrum.size(); i++) {
+			// TODO: Removed window-presum windowing, due to lack of available code RAM.
+			// TODO: Apply window to improve spectrum bin sidelobes.
+			spectrum[i] += buffer.p[i + spectrum.size() * k];
+		}
 	}
 
 	if( phase == trigger ) {
+		// Calculate DC offset
+		offset.real(0);
+		offset.imag(0);
+		for(size_t i = 0; i < spectrum.size(); i++) {
+			offset.real(offset.real() + spectrum[i].real());
+			offset.imag(offset.imag() + spectrum[i].imag());
+		}
+
+		offset.real(offset.real() / spectrum.size());
+		offset.imag(offset.imag() / spectrum.size());
+
+		for(size_t i=0; i<spectrum.size(); i++) {
+			spectrum[i].real((spectrum[i].real() - offset.real()) * sp_gain);
+			spectrum[i].imag((spectrum[i].imag() - offset.imag()) * sp_gain);
+		}
+		const buffer_c16_t buffer_c16_s {
+			spectrum.data(),
+			spectrum.size(),
+			buffer.sampling_rate / 20 / (trigger + 1)
+		};
 		const buffer_c16_t buffer_c16 {
 			spectrum.data(),
 			spectrum.size(),
 			buffer.sampling_rate
 		};
+		feed_channel_stats(buffer_c16_s);
 		channel_spectrum.feed(
 			buffer_c16,
 			0, 0
@@ -75,7 +96,7 @@ void WidebandSpectrum::on_message(const Message* const msg) {
 	case Message::ID::WidebandSpectrumConfig:
 		baseband_fs = message.sampling_rate;
 		trigger = message.trigger;
-		sp_gain = (1.0 + (float)message.gain / 50.0);
+		sp_gain = (1 + message.gain);
 		baseband_thread.set_sampling_rate(baseband_fs);
 		phase = 0;
 		configured = true;
