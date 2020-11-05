@@ -81,7 +81,7 @@
 #include "tpms_app.hpp"
 
 #include "core_control.hpp"
-
+#include "ui_looking_glass_app.hpp"
 #include "file.hpp"
 #include "png_writer.hpp"
 
@@ -467,6 +467,7 @@ ReceiversMenuView::ReceiversMenuView(NavigationView& nav) {
 		{ "ERT Meter", 	ui::Color::green(), 	&bitmap_icon_ert,		[&nav](){ nav.push<ERTAppView>(); } },
 		{ "POCSAG", 	ui::Color::green(),		&bitmap_icon_pocsag,	[&nav](){ nav.push<POCSAGAppView>(); } },
 		{ "Radiosnde", 	ui::Color::green(),		&bitmap_icon_sonde,		[&nav](){ nav.push<SondeView>(); } },
+		{ "LK Glass",	ui::Color::yellow(),	&bitmap_icon_looking,	[&nav](){ nav.push<GlassView>(); } },
 		{ "TPMS Cars", 	ui::Color::green(),		&bitmap_icon_tpms,		[&nav](){ nav.push<TPMSAppView>(); } },
 		/*{ "APRS", 		ui::Color::dark_grey(),	&bitmap_icon_aprs,		[&nav](){ nav.push<NotImplementedView>(); } },
 		{ "DMR", 		ui::Color::dark_grey(),	&bitmap_icon_dmr,		[&nav](){ nav.push<NotImplementedView>(); } },
@@ -485,7 +486,7 @@ TransmittersMenuView::TransmittersMenuView(NavigationView& nav) {
 	add_items({
 		//{ "..",				ui::Color::light_grey(),&bitmap_icon_previous,	[&nav](){ nav.pop(); } },
 		{ "ADS-B [S]",		ui::Color::yellow(), 	&bitmap_icon_adsb,		[&nav](){ nav.push<ADSBTxView>(); } },
-		{ "APRS", 			ui::Color::orange(),	&bitmap_icon_aprs,		[&nav](){ nav.push<APRSTXView>(); } },
+		{ "APRS", 			ui::Color::green(),		&bitmap_icon_aprs,		[&nav](){ nav.push<APRSTXView>(); } },
 		{ "BHT Xy/EP", 		ui::Color::green(), 	&bitmap_icon_bht,		[&nav](){ nav.push<BHTView>(); } },
 		{ "GPS Sim",		ui::Color::yellow(),	&bitmap_icon_gps_sim,		[&nav](){ nav.push<GpsSimAppView>(); } },
 		{ "Jammer", 		ui::Color::yellow(),	&bitmap_icon_jammer,	[&nav](){ nav.push<JammerView>(); } },
@@ -544,7 +545,7 @@ SystemMenuView::SystemMenuView(NavigationView& nav) {
 		{ "Replay",		ui::Color::green(),			&bitmap_icon_replay,	[&nav](){ nav.push<ReplayAppView>(); } },
 		{ "Calls",		ui::Color::yellow(),	    &bitmap_icon_search,	[&nav](){ nav.push<SearchView>(); } },
 		{ "Scanner",	ui::Color::yellow(),		&bitmap_icon_scanner,	[&nav](){ nav.push<ScannerView>(); } },
-		{ "Microphone",		ui::Color::green(),			&bitmap_icon_microphone,[&nav](){ nav.push<MicTXView>(); } },
+		{ "Microphone",	ui::Color::green(),			&bitmap_icon_microphone,[&nav](){ nav.push<MicTXView>(); } },
 		{ "Tools",		ui::Color::cyan(),			&bitmap_icon_utilities,	[&nav](){ nav.push<UtilitiesMenuView>(); } },
 		{ "Options", 	ui::Color::cyan(),			&bitmap_icon_setup,	  	[&nav](){ nav.push<SettingsMenuView>(); } },
 		{ "Debug",		ui::Color::light_grey(),	&bitmap_icon_debug,   	[&nav](){ nav.push<DebugMenuView>(); } },

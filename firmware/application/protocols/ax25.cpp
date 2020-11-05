@@ -51,7 +51,8 @@ void AX25Frame::NRZI_add_bit(const uint32_t bit) {
 	}
 }
 
-void AX25Frame::add_byte(uint8_t byte, bool is_flag, bool is_data) {
+void AX25Frame::add_byte(uint8_t byte, bool is_flag, bool is_data)
+{
 	bool bit;
 
 	if (is_data)
@@ -77,7 +78,8 @@ void AX25Frame::add_byte(uint8_t byte, bool is_flag, bool is_data) {
 	}
 }
 
-void AX25Frame::flush() {
+void AX25Frame::flush()
+{
 	if (bit_counter)
 		*bb_data_ptr = current_byte << (8 - bit_counter); //euquiq: This was 7 but there are 8 bits
 };

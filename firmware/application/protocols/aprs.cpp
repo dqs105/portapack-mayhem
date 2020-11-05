@@ -44,6 +44,7 @@ void make_aprs_frame(const char * src_address, const uint32_t src_ssid,
 	// Notice that if need to signal usage of AX.25 V2.0, (dest_ssid | 112); (MSb will need to be set at the end)
 	address[6] = (dest_ssid | 48); 
 	address[13] = (src_ssid | 48);
+
 	
 	frame.make_ui_frame(address, 0x03, protocol_id_t::NO_LAYER3, payload);
 }
