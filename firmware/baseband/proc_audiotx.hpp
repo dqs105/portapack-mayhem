@@ -52,6 +52,10 @@ private:
 	uint8_t audio_sample { };
 	int32_t sample { 0 }, delta { };
 	int8_t re { 0 }, im { 0 };
+
+	uint8_t next_audio_sample { 128 };
+	int16_t this_sample { };
+	int16_t interp_step { 0 };
 	
 	size_t progress_interval_samples, progress_samples = 0;
 	

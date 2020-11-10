@@ -40,12 +40,18 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 		if (resample_acc >= 0x1000000) {
 			resample_acc -= 0x1000000;
 			if (stream) {
-				stream->read(&audio_sample, 1);
+				audio_sample = next_audio_sample;
+				this_sample = (int16_t)(audio_sample - 0x80) << 8;
+				stream->read(&next_audio_sample, 1);
+				interp_step = ((int16_t)next_audio_sample - (int16_t)audio_sample) * 256 / (int16_t)((0x1000000 - resample_acc) / resample_inc);
 				bytes_read++;
 			}
-		}
+		} else {
+            this_sample += interp_step;
+        }
 		
-		sample = tone_gen.process(audio_sample - 0x80);
+		
+		sample = tone_gen.process((int8_t)(this_sample >> 8));
 		
 		// FM
 		delta = sample * fm_delta;
@@ -58,7 +64,7 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 
 		if (!as) {
 				as = 31;
-				audio_buffer.p[ai++] = (int16_t)(audio_sample - 0x80) << 8;
+				audio_buffer.p[ai++] = this_sample;
 		} else {
 			as--;
 		}
