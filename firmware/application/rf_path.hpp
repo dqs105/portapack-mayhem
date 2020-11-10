@@ -39,7 +39,7 @@ enum class Direction {
 
 namespace path {
 
-constexpr FrequencyRange band_low  {                0,        2150000000 };
+constexpr FrequencyRange band_low  {         -1000000,        2150000000 };
 constexpr FrequencyRange band_high {       2750000000,        7250000000 };
 constexpr FrequencyRange band_mid  { band_low.maximum, band_high.minimum };
 
@@ -68,7 +68,7 @@ private:
 
 } /* path */
 
-constexpr FrequencyRange tuning_range { path::band_low.minimum, path::band_high.maximum };
+constexpr FrequencyRange tuning_range { 0, path::band_high.maximum };
 
 } /* rf */
 
