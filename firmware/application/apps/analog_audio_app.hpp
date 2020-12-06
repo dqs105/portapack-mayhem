@@ -193,15 +193,15 @@ private:
 	//bool exit_on_squelch { false };
 	
 	RSSI rssi {
-		{ 21 * 8, 0, 6 * 8, 4 },
+		{ 21 * 8 - 4, 0, 7 * 8, 4 },
 	};
 
 	Channel channel {
-		{ 21 * 8, 5, 6 * 8, 4 },
+		{ 21 * 8 - 4, 5, 7 * 8, 4 },
 	};
 
 	Audio audio {
-		{ 21 * 8, 10, 6 * 8, 4 },
+		{ 21 * 8 - 4, 10, 7 * 8, 4 },
 	};
 
 	FrequencyField field_frequency {
