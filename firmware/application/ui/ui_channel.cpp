@@ -53,6 +53,12 @@ void Channel::paint(Painter& painter) {
 		r2,
 		Color::black()
 	);
+
+	const Rect r3 { r.left() + r.width() - 1, r.top(), 1, r.height() };
+	painter.fill_rectangle(
+		r3,
+		Color::yellow()
+	);
 }
 
 void Channel::on_statistics_update(const ChannelStatistics& statistics) {

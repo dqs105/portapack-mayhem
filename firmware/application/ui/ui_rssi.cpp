@@ -74,6 +74,12 @@ void RSSI::paint(Painter& painter) {
 		r4,
 		Color::black()
 	);
+
+	const Rect r5 { r.left() + r.width() - 1, r.top(), 1, r.height() };
+	painter.fill_rectangle(
+		r5,
+		Color::yellow()
+	);
 	
 	if (pitch_rssi_enabled)
 		baseband::set_pitch_rssi((avg_ - raw_min) * 2000 / raw_delta, true);

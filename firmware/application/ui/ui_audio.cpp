@@ -43,23 +43,29 @@ void Audio::paint(Painter& painter) {
 		r0,
 		Color::green()
 	);
-
+/*
 	const Rect r1 { r.left() + x_rms, r.top(), 1, r.height() };
 	painter.fill_rectangle(
 		r1,
 		Color::black()
 	);
-
-	const Rect r2 { r.left() + x_rms + 1, r.top(), x_max - (x_rms + 1), r.height() };
+*/
+	const Rect r2 { r.left() + x_rms, r.top(), x_max - x_rms, r.height() };
 	painter.fill_rectangle(
 		r2,
 		Color::red()
 	);
 
-	const Rect r3 { r.left() + x_max, r.top(), r.width() - x_max, r.height() };
+	const Rect r3 { r.left() + x_max, r.top(), r.width() - x_max - 1, r.height() };
 	painter.fill_rectangle(
 		r3,
 		Color::black()
+	);
+
+	const Rect r4 { r.left() + r.width() - 1, r.top(), 1, r.height() };
+	painter.fill_rectangle(
+		r4,
+		Color::yellow()
 	);
 }
 
