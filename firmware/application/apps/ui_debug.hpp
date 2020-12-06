@@ -101,8 +101,8 @@ private:
 
 	std::string temperature_str(const temperature_t temperature) const;
 
-	static constexpr temperature_t display_temp_min = -10;  //Accomodate negative values, present in cold startup cases
-	static constexpr temperature_t display_temp_scale = 3;
+	static constexpr temperature_t display_temp_min = -40;  //Accomodate negative values, present in cold startup cases
+	static constexpr temperature_t display_temp_scale = 2;
 	static constexpr int bar_width = 1;
 	static constexpr int temp_len = 4; //Now scale shows up to 4 chars ("-10C")
 };
@@ -110,10 +110,13 @@ private:
 class TemperatureView : public View {
 public:
 	explicit TemperatureView(NavigationView& nav);
+	~TemperatureView();
 
 	void focus() override;
 
 private:
+	Thread * refreshthread { nullptr };
+	
 	Text text_title {
 		{ 76, 16, 240, 16 },
 		"Temperature",

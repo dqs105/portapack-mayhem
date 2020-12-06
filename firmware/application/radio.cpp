@@ -235,7 +235,8 @@ uint32_t register_read(const size_t register_number) {
 }
 
 uint8_t temp_sense() {
-	return radio::second_if.temp_sense() & 0x1f;
+	uint16_t temp = radio::second_if.temp_sense();
+	return (temp & 0x1F) + ((temp & 0xE0) >> 4);
 }
 
 } /* namespace second_if */

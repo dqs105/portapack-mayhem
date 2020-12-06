@@ -121,7 +121,8 @@ void TemperatureWidget::paint(Painter& painter) {
 }
 
 TemperatureWidget::temperature_t TemperatureWidget::temperature(const sample_t sensor_value) const {
-	return -35 + sensor_value * 4;  //max2837 datasheet temp 25ºC has sensor value: 15
+//	return -35 + sensor_value * 4;  //max2837 datasheet temp 25ºC has sensor value: 15
+	return (int32_t)(pow((float)sensor_value, 2) * -0.04092f + 5.298f * (float)sensor_value - 45.26f); // Regression calc according to the datasheet.
 }
 
 std::string TemperatureWidget::temperature_str(const temperature_t temperature) const {
@@ -139,14 +140,50 @@ Coord TemperatureWidget::screen_y(
 
 /* TemperatureView *******************************************************/
 
+static msg_t refresh_fn(void * arg) {
+	TemperatureWidget* wg = (TemperatureWidget*)arg;
+	chRegSetThreadName("refreshthread");
+	while(!chThdShouldTerminate()) {
+		for(int i = 0; i < 50; i++) {// Update every 5 secs
+			chThdSleepMilliseconds(100);
+			if(chThdShouldTerminate()) {
+				break;
+			}
+		}
+		wg->set_dirty();
+	}
+	chThdExit(0);
+	return 0;
+}
+
 TemperatureView::TemperatureView(NavigationView& nav) {
 	add_children({
 		&text_title,
 		&temperature_widget,
 		&button_done,
 	});
+	if (refreshthread) {
+		chThdRelease(refreshthread);
+		refreshthread = nullptr;
+	}
+	refreshthread = chThdCreateFromHeap(NULL, 1024, NORMALPRIO, refresh_fn, &temperature_widget);
 
-	button_done.on_select = [&nav](Button&){ nav.pop(); };
+	button_done.on_select = [this, &nav](Button&){
+		if (refreshthread) {
+			chThdTerminate(refreshthread);
+			chThdWait(refreshthread);
+			refreshthread = nullptr;
+		}
+		nav.pop(); 
+	};
+}
+
+TemperatureView::~TemperatureView() {
+	if (refreshthread) {
+		chThdTerminate(refreshthread);
+		chThdWait(refreshthread);
+		refreshthread = nullptr;
+	}
 }
 
 void TemperatureView::focus() {
