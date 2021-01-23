@@ -314,5 +314,13 @@ void set_clkout_freq(uint32_t freq) {
 	data->ui_config = (data->ui_config & ~0x000FFFF0) | (clkout_freq_range.clip(freq) << 4);
 }
 
+bool deemph_enabled() {
+	return (data->ui_config & 0x04000000UL);
+}
+
+void set_deemph_enabled(bool enable) {
+	data->ui_config = (data->ui_config & ~0x04000000UL) | (enable << 26);
+}
+
 } /* namespace persistent_memory */
 } /* namespace portapack */

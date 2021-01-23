@@ -282,6 +282,12 @@ private:
 		1,
 		'0'
 	};
+
+	Checkbox check_deemph {
+		{ 2 * 8, 9 * 8 },
+		20,
+		"FM deemphasis enable"
+	};
 	
 	Button button_ok {
 		{ 2 * 8, 16 * 16, 12 * 8, 32 },

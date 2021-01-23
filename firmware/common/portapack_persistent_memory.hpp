@@ -98,6 +98,9 @@ void set_clkout_enabled(bool enable);
 uint32_t clkout_freq();
 void set_clkout_freq(uint32_t freq);
 
+bool deemph_enabled();
+void set_deemph_enabled(bool enable);
+
 } /* namespace persistent_memory */
 } /* namespace portapack */
 

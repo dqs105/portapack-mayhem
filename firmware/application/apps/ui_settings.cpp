@@ -330,13 +330,16 @@ SetAudioView::SetAudioView(NavigationView& nav) {
 	add_children({
 		&labels,
 		&field_tone_mix,
+		&check_deemph,
 		&button_ok
 	});
 
 	field_tone_mix.set_value(persistent_memory::tone_mix());
+	check_deemph.set_value(portapack::persistent_memory::deemph_enabled());
 	
 	button_ok.on_select = [&nav, this](Button&) {
 		persistent_memory::set_tone_mix(field_tone_mix.value());
+		persistent_memory::set_deemph_enabled(check_deemph.value());
 		nav.pop();
 	};
 }
