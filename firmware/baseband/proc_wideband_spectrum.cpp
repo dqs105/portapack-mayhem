@@ -76,7 +76,7 @@ void WidebandSpectrum::execute(const buffer_c8_t& buffer) {
 		feed_channel_stats(buffer_c16_s);
 		channel_spectrum.feed(
 			buffer_c16,
-			0, 0
+			0, 0, 0
 		);
 		phase = 0;
 	} else {
@@ -96,7 +96,6 @@ void WidebandSpectrum::on_message(const Message* const msg) {
 	case Message::ID::WidebandSpectrumConfig:
 		baseband_fs = message.sampling_rate;
 		trigger = message.trigger;
-		sp_gain = (1 + message.gain);
 		baseband_thread.set_sampling_rate(baseband_fs);
 		phase = 0;
 		configured = true;

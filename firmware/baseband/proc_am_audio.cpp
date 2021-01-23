@@ -36,22 +36,22 @@ void NarrowbandAMAudio::execute(const buffer_c8_t& buffer) {
 	const auto decim_1_out = decim_1.execute(decim_0_out, dst_buffer);
 
 	if(spec_zoom == 0)
-		channel_spectrum.feed(decim_1_out, channel_filter_pass_f, channel_filter_stop_f);
+		channel_spectrum.feed(decim_1_out, channel_filter_low_f, channel_filter_high_f, channel_filter_transition);
 
 	const auto decim_2_pre_out = decim_2_pre_filter.execute(decim_1_out, dst_buffer);
 
 	if(spec_zoom == 1)
-		channel_spectrum.feed(decim_2_pre_out, channel_filter_pass_f, channel_filter_stop_f);
+		channel_spectrum.feed(decim_2_pre_out, channel_filter_low_f, channel_filter_high_f, channel_filter_transition);
 
 	const auto decim_2_out = decim_2.execute(decim_2_pre_out, dst_buffer);
 
 	if(spec_zoom == 2)
-		channel_spectrum.feed(decim_2_out, channel_filter_pass_f, channel_filter_stop_f);
+		channel_spectrum.feed(decim_2_out, channel_filter_low_f, channel_filter_high_f, channel_filter_transition);
 
 	const auto channel_out = channel_filter.execute(decim_2_out, dst_buffer);
 
 	if(spec_zoom > 2)
-		channel_spectrum.feed(channel_out, channel_filter_pass_f, channel_filter_stop_f);
+		channel_spectrum.feed(channel_out, channel_filter_low_f, channel_filter_high_f, channel_filter_transition);
 
 	// TODO: Feed channel_stats post-decimation data?
 	feed_channel_stats(channel_out);
@@ -107,8 +107,9 @@ void NarrowbandAMAudio::configure(const AMConfigureMessage& message) {
 	decim_2_pre_filter.configure(taps_6k0_decim_2_pre.taps, decim_2_pre_decimation_factor);
 	decim_2.configure(message.decim_2_filter.taps, decim_2_decimation_factor);
 	channel_filter.configure(message.channel_filter.taps, channel_filter_decimation_factor);
-	channel_filter_pass_f = message.channel_filter.pass_frequency_normalized * channel_filter_input_fs;
-	channel_filter_stop_f = message.channel_filter.stop_frequency_normalized * channel_filter_input_fs;
+	channel_filter_low_f = message.channel_filter.low_frequency_normalized * channel_filter_input_fs;
+	channel_filter_high_f = message.channel_filter.high_frequency_normalized * channel_filter_input_fs;
+	channel_filter_transition = message.channel_filter.transition_normalized * channel_filter_input_fs;
 	spec_zoom = message.spec_zoom;
 	channel_spectrum.set_decimation_factor((spec_zoom == 1) ? 2.0f : 1.0f);
 	modulation_ssb = (message.modulation == AMConfigureMessage::Modulation::SSB);
