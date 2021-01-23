@@ -182,7 +182,7 @@ RDSView::~RDSView() {
 void RDSView::start_tx() {
 	rds_flags.PI_code = sym_pi_code.value_hex_u64();
 	rds_flags.PTY = options_pty.selected_index_value();
-	rds_flags.DI = view_PSN.mono_stereo ? 1 : 0;
+	rds_flags.DI = view_PSN.mono_stereo ? 0 : 1;
 	rds_flags.TP = check_TP.value();
 	rds_flags.TA = view_PSN.TA;
 	rds_flags.MS = view_PSN.MS;
