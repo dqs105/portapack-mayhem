@@ -142,6 +142,7 @@ SystemStatusView::SystemStatusView(
 
 	button_title.on_select = [this](ImageButton&) {
 //		this->on_title();
+		nav_.push<BMPView>();
 	};
 	
 	button_speaker.on_select = [this](ImageButton&) {

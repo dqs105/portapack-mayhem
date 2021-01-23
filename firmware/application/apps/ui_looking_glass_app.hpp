@@ -36,8 +36,8 @@ constexpr int freq_step { 10 };
  namespace ui
  {
      #define SEARCH_SLICE_WIDTH	20000000 // Each slice bandwidth 20 MHz
-     #define MHZ_DIV	            1000000
-     #define X2_MHZ_DIV	        2000000
+     #define MHZ_DIV	         1000000
+     #define X2_MHZ_DIV	         2000000
 
      class GlassView : public View
      {

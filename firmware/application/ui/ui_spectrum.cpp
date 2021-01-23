@@ -246,7 +246,8 @@ bool FrequencyScale::on_encoder(const EncoderEvent delta) {
 	
 	cursor_position = std::min<int32_t>(cursor_position, 119);
 	cursor_position = std::max<int32_t>(cursor_position, -120);
-	
+
+	_blink = true;
 	set_dirty();
 	
 	return true;

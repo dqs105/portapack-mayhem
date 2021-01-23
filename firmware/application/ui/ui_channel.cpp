@@ -30,7 +30,7 @@ namespace ui {
 void Channel::paint(Painter& painter) {
 	const auto r = screen_rect();
 
-	constexpr int db_min = -96;
+	constexpr int db_min = -80;
 	constexpr int db_max = 0;
 	constexpr int db_delta = db_max - db_min;
 	const range_t<int> x_max_range { 0, r.width() - 1 };

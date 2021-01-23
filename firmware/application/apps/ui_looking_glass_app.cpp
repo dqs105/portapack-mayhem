@@ -193,14 +193,14 @@ GlassView::GlassView(
     field_frequency_min.set_value(presets_db[0].min);   //Defaults to first preset
     field_frequency_min.on_change = [this](int32_t v) {
         if (v >= field_frequency_max.value())
-            field_frequency_max.set_value(v + freq_step);
+            field_frequency_max.set_value(v + 20);
         this->on_range_changed();
     };
 
     field_frequency_max.set_value(presets_db[0].max);   //Defaults to first preset
     field_frequency_max.on_change = [this](int32_t v) {
         if (v <= field_frequency_min.value())
-            field_frequency_min.set_value(v - freq_step);
+            field_frequency_min.set_value(v - 20);
         this->on_range_changed();
     };
 
