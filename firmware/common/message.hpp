@@ -512,14 +512,18 @@ public:
 		const fir_taps_real<64> audio_filter,
 		const size_t deviation,
 		const iir_biquad_config_t audio_hpf_config,
-		const iir_biquad_config_t audio_deemph_config
+		const iir_biquad_config_t audio_deemph_config,
+		const uint8_t aspec_type,
+		const uint8_t aspec_win
 	) : Message { ID::WFMConfigure },
 		decim_0_filter(decim_0_filter),
 		decim_1_filter(decim_1_filter),
 		audio_filter(audio_filter),
 		deviation { deviation },
 		audio_hpf_config(audio_hpf_config),
-		audio_deemph_config(audio_deemph_config)
+		audio_deemph_config(audio_deemph_config),
+		aspec_type(aspec_type),
+		aspec_win(aspec_win)
 	{
 	}
 
@@ -529,6 +533,8 @@ public:
 	const size_t deviation;
 	const iir_biquad_config_t audio_hpf_config;
 	const iir_biquad_config_t audio_deemph_config;
+	const uint8_t aspec_type;
+	const uint8_t aspec_win;
 };
 
 class AMConfigureMessage : public Message {

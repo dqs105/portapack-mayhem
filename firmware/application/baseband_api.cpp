@@ -72,14 +72,16 @@ void NBFMConfig::apply(const uint8_t squelch_level) const {
 	audio::set_rate(audio::Rate::Hz_24000);
 }
 
-void WFMConfig::apply() const {
+void WFMConfig::apply(iir_biquad_config_t deemph_config, uint8_t aspec_type, uint8_t aspec_win) const {
 	const WFMConfigureMessage message {
 		taps_200k_wfm_decim_0,
 		taps_200k_wfm_decim_1,
 		taps_64_lp_156_198,
 		75000,
 		audio_48k_hpf_30hz_config,
-		audio_48k_deemph_2122_6_config
+		deemph_config,
+		aspec_type,
+		aspec_win
 	};
 	send_message(&message);
 	audio::set_rate(audio::Rate::Hz_48000);

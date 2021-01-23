@@ -52,7 +52,7 @@ struct NBFMConfig {
 };
 
 struct WFMConfig {
-	void apply() const;
+	void apply(iir_biquad_config_t deemph_config, uint8_t aspec_type, uint8_t aspec_win) const;
 };
 
 void set_tone(const uint32_t index, const uint32_t delta, const uint32_t duration);

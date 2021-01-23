@@ -32,6 +32,31 @@
 
 #include "message.hpp"
 
+template<typename T>
+static typename T::value_type spectrum_window_none(const T& s, const size_t i) {
+	static_assert(power_of_two(s.size()), "Array size must be power of 2");
+	return s[i];
+};
+
+template<typename T>
+static typename T::value_type spectrum_window_hamming_3(const T& s, const size_t i) {
+	static_assert(power_of_two(s.size()), "Array size must be power of 2");
+	constexpr size_t mask = s.size() - 1;
+	// Three point Hamming window.
+	return s[i] * 0.54f + (s[(i-1) & mask] + s[(i+1) & mask]) * -0.23f;
+};
+
+template<typename T>
+static typename T::value_type spectrum_window_blackman_3(const T& s, const size_t i) {
+	static_assert(power_of_two(s.size()), "Array size must be power of 2");
+	constexpr size_t mask = s.size() - 1;
+	// Three term Blackman window.
+	constexpr float alpha = 0.42f;
+	constexpr float beta = 0.5f * 0.5f;
+	constexpr float gamma = 0.08f * 0.05f;
+	return s[i] * alpha - (s[(i-1) & mask] + s[(i+1) & mask]) * beta + (s[(i-2) & mask] + s[(i+2) & mask]) * gamma;
+};
+
 class SpectrumCollector {
 public:
 	void on_message(const Message* const message);

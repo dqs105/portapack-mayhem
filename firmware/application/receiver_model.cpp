@@ -312,5 +312,26 @@ size_t ReceiverModel::wfm_configuration() const {
 }
 
 void ReceiverModel::update_wfm_configuration() {
-	wfm_configs[wfm_config_index].apply();
+	if(portapack::persistent_memory::deemph_enabled()) {
+		wfm_configs[wfm_config_index].apply(audio_48k_deemph_2122_6_config, wbfm_sptype_, wbfm_spwin_);
+	} else {
+		wfm_configs[wfm_config_index].apply(iir_config_passthrough, wbfm_sptype_, wbfm_spwin_);
+	}
+	
 }
+
+uint8_t ReceiverModel::get_wbfm_sptype() {
+	return wbfm_sptype_;
+}
+void ReceiverModel::set_wbfm_sptype(uint8_t type) {
+	wbfm_sptype_ = type;
+	update_wfm_configuration();
+}
+uint8_t ReceiverModel::get_wbfm_spwin() {
+	return wbfm_spwin_;
+}
+void ReceiverModel::set_wbfm_spwin(uint8_t win) {
+	wbfm_spwin_ = win;
+	update_wfm_configuration();
+}
+

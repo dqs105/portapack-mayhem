@@ -86,6 +86,9 @@ private:
 		FEED,
 		FFT
 	};
+	uint8_t audio_fft_step { 0 };
+	uint8_t audio_fft_type { 0 }; // 0 - MPX, 1 - Audio
+	uint8_t audio_fft_window { 0 }; // 0 - None, 1 - Hamming, 2 - Blackman
 	AudioSpectrumState audio_spectrum_state { IDLE };
 	AudioSpectrum spectrum { };
 	uint32_t fft_step { 0 };

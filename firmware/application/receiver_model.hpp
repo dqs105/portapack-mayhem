@@ -90,6 +90,12 @@ public:
 	size_t wfm_configuration() const;
 	void set_wfm_configuration(const size_t n);
 
+
+	uint8_t get_wbfm_sptype();
+	void set_wbfm_sptype(uint8_t type);
+	uint8_t get_wbfm_spwin();
+	void set_wbfm_spwin(uint8_t win);
+
 private:
 	rf::Frequency frequency_step_ { 25000 };
 	bool enabled_ { false };
@@ -104,6 +110,8 @@ private:
 	uint8_t am_spec_zoom_ = 0;
 	size_t nbfm_config_index = 0;
 	size_t wfm_config_index = 0;
+	uint8_t wbfm_sptype_ = 0;
+	uint8_t wbfm_spwin_ = 0;
 	volume_t headphone_volume_ { -43.0_dB };
 	uint8_t squelch_level_ { 80 };
 

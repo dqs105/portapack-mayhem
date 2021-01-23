@@ -89,6 +89,32 @@ NBFMOptionsView::NBFMOptionsView(
 	};
 }
 
+/* WBFMOptionsView *********************************************************/
+
+WBFMOptionsView::WBFMOptionsView(
+	const Rect parent_rect, const Style* const style
+) : View { parent_rect }
+{
+	set_style(style);
+
+	add_children({
+		&label_sptype,
+		&options_sptype,
+		&label_spconfig,
+		&options_spconfig
+	});
+
+	options_sptype.set_selected_index(receiver_model.get_wbfm_sptype());
+	options_sptype.on_change = [this](size_t n, OptionsField::value_t) {
+		receiver_model.set_wbfm_sptype(options_sptype.selected_index());
+	};
+
+	options_spconfig.set_selected_index(receiver_model.get_wbfm_spwin());
+	options_spconfig.on_change = [this](size_t n, OptionsField::value_t) {
+		receiver_model.set_wbfm_spwin(options_spconfig.selected_index());
+	};
+}
+
 /* SPECOptionsView *******************************************************/
 
 SPECOptionsView::SPECOptionsView(
@@ -338,6 +364,7 @@ void AnalogAudioView::on_show_options_modulation() {
 		break;
 	
 	case ReceiverModel::Mode::WidebandFMAudio:
+		widget = std::make_unique<WBFMOptionsView>(options_view_rect, &style_options_group);
 		waterfall.show_audio_spectrum_view(true);
 		text_ctcss.hidden(true);
 		break;

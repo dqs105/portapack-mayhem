@@ -109,6 +109,41 @@ private:
 
 class AnalogAudioView;
 
+class WBFMOptionsView : public View {
+public:
+	WBFMOptionsView(const Rect parent_rect, const Style* const style);
+
+private:
+	Text label_sptype {
+		{ 0 * 8, 0 * 16, 6 * 8, 1 * 16 },
+		"SPtype",
+	};
+	OptionsField options_sptype {
+		{ 7 * 8, 0 * 16 },
+		5,
+		{
+			{ "MPX  ", 0 },
+			{ "Audio", 0 },
+		}
+	};
+	
+	Text label_spconfig {
+		{ 14 * 8, 0 * 16, 8 * 8, 1 * 16 },
+		"Win"
+	};
+	OptionsField options_spconfig {
+		{ 18 * 8, 0 * 16 },
+		8,
+		{
+			{ "Rect    ", 0 },
+			{ "Hamming ", 0 },
+			{ "Blackman", 0 },
+		}
+	};
+
+
+};
+
 class SPECOptionsView : public View {
 public:
 	SPECOptionsView(AnalogAudioView* view, const Rect parent_rect, const Style* const style);
