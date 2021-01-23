@@ -45,7 +45,7 @@ public:
 	}
 
 private:
-	static constexpr float update_interval { 0.1f };
+	static constexpr float update_interval { 0.05f };
 	float squared_sum { 0 };
 	float max_squared { 0 };
 	size_t count { 0 };
