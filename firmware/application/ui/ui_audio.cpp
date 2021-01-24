@@ -34,9 +34,26 @@ void Audio::paint(Painter& painter) {
 	constexpr int db_max = 0;
 	constexpr int db_delta = db_max - db_min;
 	const range_t<int> x_rms_range { 0, r.width() - 1 };
-	const auto x_rms = x_rms_range.clip((rms_db_ - db_min) * r.width() / db_delta);
-	const range_t<int> x_max_range { x_rms + 1, r.width() };
-	const auto x_max = x_max_range.clip((max_db_ - db_min) * r.width() / db_delta);
+	const auto x_rms_now = x_rms_range.clip((rms_db_ - db_min) * r.width() / db_delta);
+	const range_t<int> x_max_range { x_rms_now + 1, r.width() };
+	const auto x_max_now = x_max_range.clip((max_db_ - db_min) * r.width() / db_delta);
+	if(decay_) {
+		if(x_rms > x_rms_now) {
+			x_rms -= (((float)x_rms - (float)x_rms_now) / 20.0 / ((float)decay_ / 1000.0));
+		}
+		if(x_max > x_max_now) {
+			x_max -= (((float)x_max - (float)x_max_now) / 20.0 / ((float)decay_ / 1000.0));
+		}
+		if(x_rms < x_rms_now) {
+			x_rms = x_rms_now;
+		}
+		if(x_max < x_max_now) {
+			x_max = x_max_now;
+		}
+	} else {
+		x_rms = x_rms_now;
+		x_max = x_max_now;
+	}
 
 	const Rect r0 { r.left(), r.top(), x_rms, r.height() };
 	painter.fill_rectangle(

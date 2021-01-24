@@ -35,8 +35,10 @@ namespace ui {
 class Audio : public Widget {
 public:
 	Audio(
-		const Rect parent_rect
+		const Rect parent_rect,
+		const int16_t decay = 0 // ms
 	) : Widget { parent_rect },
+		decay_ { decay },
 		rms_db_ { -120 },
 		max_db_ { -120 }
 	{
@@ -47,6 +49,9 @@ public:
 private:
 	int32_t rms_db_;
 	int32_t max_db_;
+	int16_t decay_;
+	int16_t x_rms { -96 };
+	int16_t x_max { -96 };
 
 	MessageHandlerRegistration message_handler_statistics {
 		Message::ID::AudioStatistics,
