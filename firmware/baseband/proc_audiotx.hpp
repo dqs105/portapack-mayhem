@@ -49,13 +49,16 @@ private:
 	uint32_t resample_inc { }, resample_acc { };
 	uint32_t fm_delta { 0 };
 	uint32_t phase { 0 }, sphase { 0 };
-	uint8_t audio_sample { };
 	int32_t sample { 0 }, delta { };
 	int8_t re { 0 }, im { 0 };
 
-	uint8_t next_audio_sample { 128 };
+	int16_t audio_sample { };
+	uint8_t audio_sample8 { };
+	int16_t next_audio_sample { 0 };
+	uint8_t next_audio_sample8 { 128 };
 	int16_t this_sample { };
 	int16_t interp_step { 0 };
+	uint8_t bit_type { 0 };
 	
 	size_t progress_interval_samples, progress_samples = 0;
 	

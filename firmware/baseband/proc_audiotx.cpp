@@ -40,11 +40,19 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 		if (resample_acc >= 0x1000000) {
 			resample_acc -= 0x1000000;
 			if (stream) {
-				audio_sample = next_audio_sample;
-				this_sample = (int16_t)(audio_sample - 0x80) << 8;
-				stream->read(&next_audio_sample, 1);
-				interp_step = ((int16_t)next_audio_sample - (int16_t)audio_sample) * 256 / (int16_t)((0x1000000 - resample_acc) / resample_inc);
-				bytes_read++;
+				if(bit_type == 0) {
+					audio_sample8 = next_audio_sample8;
+					this_sample = (int16_t)(audio_sample8 - 0x80) << 8;
+					stream->read(&next_audio_sample8, 1);
+					interp_step = ((int16_t)next_audio_sample8 - (int16_t)audio_sample8) * 256 / (int16_t)((0x1000000 - resample_acc) / resample_inc);
+					bytes_read++;
+				} else {
+					audio_sample = next_audio_sample;
+					this_sample = audio_sample;
+					stream->read(&next_audio_sample, 2);
+					interp_step = (next_audio_sample - audio_sample) / (int16_t)((0x1000000 - resample_acc) / resample_inc);
+					bytes_read += 2;
+				}
 			}
 		} else {
             this_sample += interp_step;
@@ -118,6 +126,7 @@ void AudioTXProcessor::audio_config(const AudioTXConfigMessage& message) {
 	resample_acc = 0;
 	audio_output.configure(audio_48k_hpf_30hz_config);
 	baseband_fs = (size_t)((float)baseband_fs_base / ((float)message.speed / 100.0));
+	bit_type = message.bit_type;
 }
 
 void AudioTXProcessor::replay_config(const ReplayConfigMessage& message) {
