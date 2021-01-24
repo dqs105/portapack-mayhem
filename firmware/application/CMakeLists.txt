@@ -252,6 +252,7 @@ set(CPPSRC
 	apps/ui_touchtunes.cpp
 	apps/ui_view_wav.cpp
 	apps/ui_whipcalc.cpp
+	apps/ui_wavplayer.cpp
 	apps/acars_app.cpp
 	apps/ais_app.cpp
 	apps/analog_audio_app.cpp

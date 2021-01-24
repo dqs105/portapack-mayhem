@@ -66,6 +66,7 @@
 #include "ui_touchtunes.hpp"
 #include "ui_view_wav.hpp"
 #include "ui_whipcalc.hpp"
+#include "ui_wavplayer.hpp"
 
 #include "acars_app.hpp"
 #include "ais_app.hpp"
@@ -521,6 +522,7 @@ UtilitiesMenuView::UtilitiesMenuView(NavigationView& nav) {
 		{ "Wave viewer",	ui::Color::yellow(),	&bitmap_icon_soundboard,	[&nav](){ nav.push<ViewWavView>(); } },
 		{ "Antenna length",	ui::Color::green(),		&bitmap_icon_tools_antenna,	[&nav](){ nav.push<WhipCalcView>(); } },
 		{ "Wipe SD card",	ui::Color::red(),		&bitmap_icon_tools_wipesd,	[&nav](){ nav.push<WipeSDView>(); } },
+		{ "Wave player",	ui::Color::yellow(),	&bitmap_icon_file_wav,		[&nav](){ nav.push<WavPlayerView>();} },
 	});
 	set_max_rows(2); // allow wider buttons
 }
