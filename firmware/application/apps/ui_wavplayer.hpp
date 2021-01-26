@@ -54,6 +54,7 @@ private:
 
 	uint32_t sample_rate { 0 };
 	uint8_t bit_type { 0 }; // 0 - 8bit, 1 - 16bit
+	uint8_t channels { 0 }; // 0 - 1 ch, 1 - 2ch
 
 	std::unique_ptr<WAVFileReader> wav_reader { };
 
@@ -74,6 +75,7 @@ private:
 		{ { 2 * 8 ,  5 * 8 }, "Duration:", Color::light_grey() },
 		{ { 2 * 8 ,  7 * 8 }, "Sample rate:", Color::light_grey() },
 		{ { 2 * 8 ,  9 * 8 }, "Bits:", Color::light_grey() },
+		{ { 11 * 8 ,  9 * 8 }, "Channels:", Color::light_grey() },
 		{ { 2 * 8 , 12 * 8 - 4 }, "Volume:", Color::light_grey() },
 		{ { 2 * 8 , 14 * 8 - 4 }, "Speed:   %", Color::light_grey() },
 	};
@@ -84,8 +86,14 @@ private:
 	};
 
 	Button button_playpause {
-		{ 11 * 8, 24 * 8, 9 * 8, 4 * 8 },
+		{ 16 * 8, 24 * 8, 9 * 8, 4 * 8 },
 		"Play"
+	};
+
+	Checkbox check_loop {
+		{ 4 * 8, 24 * 8 + 4 },
+		4,
+		"Loop"
 	};
 
 	Text text_filename {
@@ -104,17 +112,22 @@ private:
 	};
 
 	Text text_samplerate {
-		{ 14 * 8, 7 * 8, 6 * 8, 16 },
+		{ 14 * 8, 7 * 8, 6 * 8, 7 },
 		"-"
 	};
 
 	Text text_bits {
-		{ 7 * 8, 9 * 8, 6 * 8, 16 },
+		{ 7 * 8, 9 * 8, 6 * 8, 2 },
+		"-"
+	};
+
+	Text text_channels {
+		{ 20 * 8, 9 * 8, 6 * 8, 1 },
 		"-"
 	};
 
 	Text text_cur_pos {
-		{ 2 * 8, 18 * 8 - 4, 6 * 8, 16},
+		{ 2 * 8, 18 * 8 - 4, 6 * 8, 16 },
 		"-"
 	};
 
@@ -140,7 +153,7 @@ private:
 
 	Audio audio {
 		{ 0 * 8, 22 * 8, 30 * 8, 8 },
-		500
+		625
 	};
 
 	MessageHandlerRegistration message_handler_replay_thread_error {

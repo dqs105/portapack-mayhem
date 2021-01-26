@@ -152,7 +152,7 @@ std::string WAVFileReader::title() {
 }
 
 uint32_t WAVFileReader::ms_duration() {
-	return (data_size_ / sample_rate_ / bytes_per_sample) * 1000;
+	return (data_size_ / sample_rate_ / bytes_per_sample / header.fmt.nChannels) * 1000;
 }
 
 void WAVFileReader::data_seek(const uint64_t Offset) {

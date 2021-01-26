@@ -98,6 +98,7 @@ void SoundBoardView::start_tx(const uint32_t id) {
 	uint32_t tone_key_index = options_tone_key.selected_index();
 	uint32_t sample_rate;
 	uint8_t bit_type; // 0 - 8bit, 1 - 16bit
+	uint8_t channels; // 0 - 1 ch, 1 - 2ch
 	
 	stop();
 
@@ -114,6 +115,7 @@ void SoundBoardView::start_tx(const uint32_t id) {
 	
 	sample_rate = reader->sample_rate();
 	bit_type = reader->bits_per_sample() == 8 ? 0 : 1;
+	channels = reader->channels() - 1;
 
 	// It's terrible. System transmitting threading seems to be limited to around 2478000Hz.
 	transmitter_model.set_sampling_rate(1536000);
@@ -125,7 +127,8 @@ void SoundBoardView::start_tx(const uint32_t id) {
 		0,	// Gain is unused
 		TONES_F2D(tone_key_frequency(tone_key_index), 1536000),
 		field_speed.value(),
-		bit_type
+		bit_type,
+		channels
 	);
 	baseband::set_sample_rate(sample_rate);
 
@@ -230,7 +233,7 @@ void SoundBoardView::refresh_list() {
 				if (entry_extension == ".WAV") {
 					
 					if (reader->open(u"/WAV/" + entry.path().native())) {
-						if ((reader->channels() == 1) && ((reader->bits_per_sample() == 8) || (reader->bits_per_sample() == 16))) {
+						if ((reader->channels() <= 2)  && ((reader->bits_per_sample() == 8) || (reader->bits_per_sample() == 16))) {
 							//sounds[c].ms_duration = reader->ms_duration();
 							//sounds[c].path = u"WAV/" + entry.path().native();
 							if (count >= (page - 1) * 100 && count < page * 100){

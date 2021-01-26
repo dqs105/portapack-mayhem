@@ -41,7 +41,7 @@ void WavPlayerView::stop() {
 		replay_thread.reset();
 
 	baseband::replay_stop();
-	
+
 	audio::output::stop();
 
 	playing = false;
@@ -55,7 +55,9 @@ void WavPlayerView::handle_replay_thread_done(const uint32_t return_code) {
 	stop();
 	progressbar.set_value(0);
 	if (return_code == ReplayThread::END_OF_FILE) {
-		
+		if(check_loop.value()) {
+			start_play();
+		}
 	} else if (return_code == ReplayThread::READ_ERROR) {
 		nav_.display_modal("Error", "File read error.");
 	}
@@ -86,7 +88,8 @@ void WavPlayerView::start_play() {
 		0,	// Gain is unused
 		0,
 		field_speed.value(),
-		bit_type
+		bit_type,
+		channels
 	);
 	baseband::set_sample_rate(sample_rate);
 	// Put replay thread to be initialized at last. maybe meaningful.
@@ -111,27 +114,30 @@ void WavPlayerView::start_play() {
 
 void WavPlayerView::load_wav(std::filesystem::path file_path) {
 	soundfile_path = file_path;
-	
+
 	text_filename.set(file_path.filename().string());
 	text_duration.set(to_string_time_ms(wav_reader->ms_duration()));
 	text_title.set(wav_reader->title().substr(0, 22));
 	text_samplerate.set(to_string_dec_uint(wav_reader->sample_rate()) + " Hz");
 	text_bits.set(to_string_dec_int(wav_reader->bits_per_sample()));
+	text_channels.set(to_string_dec_int(wav_reader->channels()));
 	sample_rate = wav_reader->sample_rate();
 	bit_type = wav_reader->bits_per_sample() == 8 ? 0 : 1;
+	channels = wav_reader->channels() - 1;
 
 	button_playpause.hidden(false);
+	check_loop.hidden(false);
 
 	text_cur_pos.set("0");
 	progressbar.set_max(wav_reader->sample_count() * (bit_type ? 2 : 1));
-	
+
 	button_playpause.focus();
 }
 
 
 void WavPlayerView::on_tx_progress(const uint32_t progress) {
 	progressbar.set_value(progress);
-	text_cur_pos.set(to_string_time_ms(progress / ((sample_rate / 1000) * (bit_type ? 2 : 1))));
+	text_cur_pos.set(to_string_time_ms(progress / ((sample_rate / 1000) * (bit_type ? 2 : 1) * (channels + 1))));
 }
 
 WavPlayerView::WavPlayerView(
@@ -147,18 +153,23 @@ WavPlayerView::WavPlayerView(
 		&text_duration,
 		&text_samplerate,
 		&text_bits,
+		&text_channels,
 		&text_cur_pos,
 		&field_volume,
 		&field_speed,
 		&button_open,
 		&button_playpause,
+		&check_loop,
 		&progressbar,
 		&audio
 	});
-	
+
 //	refresh_list();
 
 	button_playpause.hidden(true);
+	check_loop.hidden(true);
+
+	check_loop.set_value(false);
 
 	button_playpause.on_select = [this](Button&) {
 		if(playing) {
@@ -175,8 +186,8 @@ WavPlayerView::WavPlayerView(
 				nav_.display_modal("Error", "Couldn't open file.", INFO, nullptr);
 				return;
 			}
-			if ((wav_reader->channels() != 1) || !((wav_reader->bits_per_sample() == 16) || (wav_reader->bits_per_sample() == 8))) {
-				nav_.display_modal("Error", "Wrong format.\nWav viewer only accepts\n16 or 8-bit mono files.", INFO, nullptr);
+			if ((wav_reader->channels() > 2) || !((wav_reader->bits_per_sample() == 16) || (wav_reader->bits_per_sample() == 8))) {
+				nav_.display_modal("Error", "Wrong format.\nWav player only accepts\n16 or 8-bit files.", INFO, nullptr);
 				return;
 			}
 			load_wav(file_path);
@@ -188,13 +199,13 @@ WavPlayerView::WavPlayerView(
 	};
 
 	field_volume.set_value((receiver_model.headphone_volume() - audio::headphone::volume_range().max).decibel() + 99);
-	field_volume.on_change = [this](int32_t v) { 
-		receiver_model.set_headphone_volume(volume_t::decibel(v - 99) + audio::headphone::volume_range().max); 
+	field_volume.on_change = [this](int32_t v) {
+		receiver_model.set_headphone_volume(volume_t::decibel(v - 99) + audio::headphone::volume_range().max);
 	};
 	receiver_model.set_headphone_volume(receiver_model.headphone_volume());
 
 	field_speed.set_value(100);
-	
+
 	audio::set_rate(audio::Rate::Hz_48000);
 }
 

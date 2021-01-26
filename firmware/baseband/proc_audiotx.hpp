@@ -39,6 +39,7 @@ public:
 private:
 	size_t baseband_fs = 1536000;
 	static constexpr size_t baseband_fs_base = 1536000;
+	static constexpr uint8_t audio_decimation_factor = baseband_fs_base / 48000;
 	
 	BasebandThread baseband_thread { baseband_fs_base, this, NORMALPRIO + 20, baseband::Direction::Transmit };
 	
@@ -58,7 +59,16 @@ private:
 	uint8_t next_audio_sample8 { 128 };
 	int16_t this_sample { };
 	int16_t interp_step { 0 };
+	int16_t audio_sample_r { };
+	uint8_t audio_sample8_r { };
+	int16_t next_audio_sample_r { 0 };
+	uint8_t next_audio_sample8_r { 128 };
+	int16_t this_sample_r { };
+	int16_t interp_step_r { 0 };
+
+
 	uint8_t bit_type { 0 };
+	uint8_t channels { 0 };
 	
 	size_t progress_interval_samples, progress_samples = 0;
 	
@@ -76,6 +86,11 @@ private:
 	const buffer_s16_t audio_buffer {
 		(int16_t*)audio.data(),
 		sizeof(audio) / sizeof(int16_t)
+	};
+	std::array<int16_t, 32> audio_right { };		// right channel
+	const buffer_s16_t audio_buffer_right {
+		(int16_t*)audio_right.data(),
+		sizeof(audio_right) / sizeof(int16_t)
 	};
 	uint16_t as { 0 }, ai { 0 };
 	AudioOutput audio_output { };

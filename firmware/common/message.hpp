@@ -870,7 +870,8 @@ public:
 		const uint32_t tone_key_delta,
 		const float tone_key_mix_weight,
 		const uint16_t speed,
-		const uint8_t bit_type
+		const uint8_t bit_type,
+		const uint8_t channels
 	) : Message { ID::AudioTXConfig },
 		divider(divider),
 		deviation_hz(deviation_hz),
@@ -878,7 +879,8 @@ public:
 		tone_key_delta(tone_key_delta),
 		tone_key_mix_weight(tone_key_mix_weight),
 		speed(speed),
-		bit_type(bit_type)
+		bit_type(bit_type),
+		channels(channels)
 	{
 	}
 
@@ -889,6 +891,7 @@ public:
 	const float tone_key_mix_weight;
 	const uint16_t speed;
 	const uint8_t bit_type;
+	const uint8_t channels;
 };
 
 class SigGenConfigMessage : public Message {

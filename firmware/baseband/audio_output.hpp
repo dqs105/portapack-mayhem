@@ -47,6 +47,10 @@ public:
 
 	void write(const buffer_s16_t& audio);
 	void write(const buffer_f32_t& audio);
+	void write(const buffer_s16_t& audio_left, const buffer_s16_t& audio_right);
+	void write(const buffer_f32_t& audio_left, const buffer_f32_t& audio_right);
+
+	void write_direct(const buffer_s16_t& audio_left, const buffer_s16_t& audio_right);
 
 	void set_stream(std::unique_ptr<StreamInput> new_stream) {
 		stream = std::move(new_stream);
@@ -75,6 +79,9 @@ private:
 
 	void on_block(const buffer_f32_t& audio);
 	void fill_audio_buffer(const buffer_f32_t& audio, const bool send_to_fifo);
+
+	void on_block(const buffer_f32_t& audio_left, const buffer_f32_t& audio_right);
+	void fill_audio_buffer(const buffer_f32_t& audio_left, const buffer_f32_t& audio_right, const bool send_to_fifo);
 	void feed_audio_stats(const buffer_f32_t& audio);
 };
 

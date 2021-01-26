@@ -53,13 +53,32 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 					interp_step = (next_audio_sample - audio_sample) / (int16_t)((0x1000000 - resample_acc) / resample_inc);
 					bytes_read += 2;
 				}
+				if(channels) {
+					if(bit_type == 0) {
+						audio_sample8_r = next_audio_sample8_r;
+						this_sample_r = (int16_t)(audio_sample8_r - 0x80) << 8;
+						stream->read(&next_audio_sample8, 1);
+						interp_step_r = ((int16_t)next_audio_sample8_r - (int16_t)audio_sample8_r) * 256 / (int16_t)((0x1000000 - resample_acc) / resample_inc);
+						bytes_read++;
+					} else {
+						audio_sample_r = next_audio_sample_r;
+						this_sample_r = audio_sample_r;
+						stream->read(&next_audio_sample_r, 2);
+						interp_step_r = (next_audio_sample_r - audio_sample_r) / (int16_t)((0x1000000 - resample_acc) / resample_inc);
+						bytes_read += 2;
+					}
+				}
 			}
 		} else {
             this_sample += interp_step;
+			this_sample_r += interp_step_r;
         }
 		
-		
-		sample = tone_gen.process((int8_t)(this_sample >> 8));
+		if(channels) {
+			sample = tone_gen.process((int8_t)((((int32_t)this_sample + (int32_t)this_sample_r) / 2) >> 8));
+		} else {
+			sample = tone_gen.process((int8_t)(this_sample >> 8));
+		}
 		
 		// FM
 		delta = sample * fm_delta;
@@ -71,13 +90,22 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 		im = sine_table_i8[(phase & 0xFF000000U) >> 24];
 
 		if (!as) {
-				as = 31;
-				audio_buffer.p[ai++] = this_sample;
+			as = audio_decimation_factor - 1;
+			audio_buffer.p[ai] = this_sample;
+			if(channels){
+				audio_buffer_right.p[ai] = this_sample_r;
+			}
+			ai++;
 		} else {
 			as--;
 		}
 		if(ai == 32) {
-			audio_output.write(audio_buffer);
+			if(channels) {
+				audio_output.write_direct(audio_buffer, audio_buffer_right);
+			}
+			else {
+				audio_output.write(audio_buffer);
+			}
 			ai = 0;
 		}
 		
@@ -127,6 +155,7 @@ void AudioTXProcessor::audio_config(const AudioTXConfigMessage& message) {
 	audio_output.configure(audio_48k_hpf_30hz_config);
 	baseband_fs = (size_t)((float)baseband_fs_base / ((float)message.speed / 100.0));
 	bit_type = message.bit_type;
+	channels = message.channels;
 }
 
 void AudioTXProcessor::replay_config(const ReplayConfigMessage& message) {
