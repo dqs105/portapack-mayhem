@@ -66,4 +66,4 @@ CMakeFiles/
 /firmware/CMakeCache.txt
 
 # leave out hackrf repository.
-/hackrf
+hackrf/
