@@ -96,6 +96,7 @@ void WidebandSpectrum::on_message(const Message* const msg) {
 	case Message::ID::WidebandSpectrumConfig:
 		baseband_fs = message.sampling_rate;
 		trigger = message.trigger;
+		sp_gain = (1 + message.gain);
 		baseband_thread.set_sampling_rate(baseband_fs);
 		phase = 0;
 		configured = true;
