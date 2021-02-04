@@ -80,8 +80,6 @@ void WavPlayerView::start_play() {
 		return;
 	}
 
-	// It's terrible. System transmitting threading seems to be limited to around 2478000Hz.
-	transmitter_model.set_sampling_rate(1536000);
 	baseband::set_audiotx_config(
 		1536000 / 20,		// Update vu-meter at 20Hz
 		transmitter_model.channel_bandwidth(),
@@ -145,6 +143,12 @@ WavPlayerView::WavPlayerView(
 ) : nav_ (nav)
 {
 	baseband::run_image(portapack::spi_flash::image_tag_audio_tx);
+
+	// It's terrible. System transmitting threading seems to be limited to around 2478000Hz.
+	// When running wav player, set sampling rate first.
+	transmitter_model.set_sampling_rate(1536000);
+	transmitter_model.disable();
+
 	wav_reader = std::make_unique<WAVFileReader>();
 	add_children({
 		&labels_info,
