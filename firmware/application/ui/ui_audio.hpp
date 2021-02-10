@@ -47,9 +47,9 @@ public:
 	void paint(Painter& painter) override;
 
 private:
+	int16_t decay_;
 	int32_t rms_db_;
 	int32_t max_db_;
-	int16_t decay_;
 	int16_t x_rms { -96 };
 	int16_t x_max { -96 };
 

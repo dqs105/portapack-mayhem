@@ -354,10 +354,12 @@ public:
 	}
 
 	void microphone_setamp(uint8_t vol) override {
+		(void)vol;
 		// TODO: Implement
 	}
 
 	void microphone_setvol(uint8_t vol) override {
+		(void)vol;
 		// TODO: Implement
 	}
 

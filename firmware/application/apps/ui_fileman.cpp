@@ -216,6 +216,7 @@ FileSaveView::FileSaveView(
 }*/
 
 void FileLoadView::refresh_widgets(const bool v) {
+	(void)v;
 	set_dirty();
 }
 

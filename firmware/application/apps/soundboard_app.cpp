@@ -97,8 +97,8 @@ void SoundBoardView::start_tx(const uint32_t id) {
 	auto reader = std::make_unique<WAVFileReader>();
 	uint32_t tone_key_index = options_tone_key.selected_index();
 	uint32_t sample_rate;
-	uint8_t bit_type; // 0 - 8bit, 1 - 16bit
-	uint8_t channels; // 0 - 1 ch, 1 - 2ch
+	uint8_t bit_type = 0; // 0 - 8bit, 1 - 16bit
+	uint8_t channels = 0; // 0 - 1 ch, 1 - 2ch
 	
 	stop();
 

@@ -50,7 +50,8 @@ private:
 	const size_t buffer_count { 3 };
 	std::unique_ptr<ReplayThread> replay_thread { };
 	bool ready_signal { false };
-	std::filesystem::path soundfile_path;
+	std::filesystem::path soundfile_path { };
+
 
 	uint32_t sample_rate { 0 };
 	uint8_t bit_type { 0 }; // 0 - 8bit, 1 - 16bit

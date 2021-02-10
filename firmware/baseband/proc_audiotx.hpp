@@ -70,7 +70,7 @@ private:
 	uint8_t bit_type { 0 };
 	uint8_t channels { 0 };
 	
-	size_t progress_interval_samples, progress_samples = 0;
+	size_t progress_interval_samples = 0, progress_samples = 0;
 	
 	bool configured { false };
 	uint32_t bytes_read { 0 };
