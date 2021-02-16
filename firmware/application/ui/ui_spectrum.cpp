@@ -286,14 +286,15 @@ void WaterfallView::on_channel_spectrum(
 ) {
 	/* TODO: static_assert that message.spectrum.db.size() >= pixel_row.size() */
 
+	const auto lut = get_lut();
 	std::array<Color, 240> pixel_row;
 	for(size_t i=0; i<120; i++) {
-		const auto pixel_color = spectrum_rgb3_lut[spectrum.db[256 - 120 + i]];
+		const auto pixel_color = lut[spectrum.db[256 - 120 + i]];
 		pixel_row[i] = pixel_color;
 	}
 
 	for(size_t i=120; i<240; i++) {
-		const auto pixel_color = spectrum_rgb3_lut[spectrum.db[i - 120]];
+		const auto pixel_color = lut[spectrum.db[i - 120]];
 		pixel_row[i] = pixel_color;
 	}
 

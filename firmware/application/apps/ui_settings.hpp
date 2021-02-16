@@ -273,6 +273,7 @@ public:
 private:
 	Labels labels {
 		{ { 2 * 8, 3 * 16 }, "Tone key mix:   %", Color::light_grey() },
+		{ { 2 * 8, 13 * 8 }, "Spectrum: ", Color::light_grey() },
 	};
 	
 	NumberField field_tone_mix {
@@ -287,6 +288,17 @@ private:
 		{ 2 * 8, 9 * 8 },
 		20,
 		"FM deemphasis enable"
+	};
+
+	OptionsField field_colormap {
+		{ 12 * 8, 13 * 8 },
+		4,
+		{
+			{ "Turbo", 0 },
+			{ "RGB  ", 1 },
+			{ "Grey ", 2 },
+			{ "Gqrx ", 3 }
+		},
 	};
 	
 	Button button_ok {

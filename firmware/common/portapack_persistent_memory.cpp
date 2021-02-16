@@ -26,6 +26,7 @@
 #include "hal.h"
 
 #include "utility.hpp"
+#include "crc.hpp"
 
 #include "memory_map.hpp"
 using portapack::memory::map::backup_ram;
@@ -95,9 +96,12 @@ struct data_t {
 	uint32_t pocsag_ignore_address;
 	
 	int32_t tone_mix;
+	
+	uint32_t pmem_crc;
 };
 
 static_assert(sizeof(data_t) <= backup_ram.size(), "Persistent memory structure too large for VBAT-maintained region");
+
 
 static data_t* const data = reinterpret_cast<data_t*>(backup_ram.base());
 
@@ -227,6 +231,9 @@ void set_playdead_sequence(const uint32_t new_value) {
 // bits 31, 30,29,28,27 stores the different single bit configs depicted below
 // bits on position 4 to 19 (16 bits) store the clkout frequency
 
+// New: 26 FM deemphasis
+// 20-21: spec colormap type
+
 bool clkout_enabled() {
 	return data->ui_config & (1 << 27);
 }
@@ -324,6 +331,14 @@ bool deemph_enabled() {
 
 void set_deemph_enabled(bool enable) {
 	data->ui_config = (data->ui_config & ~0x04000000UL) | (enable << 26);
+}
+
+uint8_t spec_colormap() {
+	return (data->ui_config & 0x00300000) >> 20;
+}
+
+void set_colormap(uint8_t v) {
+	data->ui_config = (data->ui_config & ~0x00300000) | ((v & 0x03) << 20);
 }
 
 } /* namespace persistent_memory */

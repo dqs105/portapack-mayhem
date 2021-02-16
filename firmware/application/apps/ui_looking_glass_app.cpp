@@ -63,6 +63,8 @@ void GlassView::on_channel_spectrum(const ChannelSpectrum &spectrum)
 {
     baseband::spectrum_streaming_stop();
 
+    auto lut = get_lut();
+
     // Convert bins of this spectrum slice into a representative max_power and when enough, into pixels
     // Spectrum.db has 256 bins. Center 12 bins are ignored (DC spike is blanked) Leftmost and rightmost 2 bins are ignored
     // All things said and done, we actually need 240 of those bins:
@@ -83,7 +85,7 @@ void GlassView::on_channel_spectrum(const ChannelSpectrum &spectrum)
         if (bins_Hz_size >= marker_pixel_step) //new pixel fullfilled
         {
             if (min_color_power < max_power)
-                add_spectrum_pixel(spectrum_rgb3_lut[max_power]); //Pixel will represent max_power
+                add_spectrum_pixel(lut[max_power]); //Pixel will represent max_power
             else
                 add_spectrum_pixel(0);  //Filtered out, show black
 

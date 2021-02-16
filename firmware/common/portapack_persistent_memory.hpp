@@ -101,6 +101,9 @@ void set_clkout_freq(uint32_t freq);
 bool deemph_enabled();
 void set_deemph_enabled(bool enable);
 
+uint8_t spec_colormap();
+void set_colormap(uint8_t v);
+
 } /* namespace persistent_memory */
 } /* namespace portapack */
 

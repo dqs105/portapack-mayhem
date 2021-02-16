@@ -193,6 +193,8 @@ void SearchView::on_channel_spectrum(const ChannelSpectrum& spectrum) {
 	size_t bin;
 	
 	baseband::spectrum_streaming_stop();
+
+	auto lut = get_lut();
 	
 	// Add pixels to spectrum display and find max power for this slice
 	// Center 12 bins are ignored (DC spike is blanked)
@@ -208,7 +210,7 @@ void SearchView::on_channel_spectrum(const ChannelSpectrum& spectrum) {
 				power = spectrum.db[bin - 128];
 		}
 		
-		add_spectrum_pixel(spectrum_rgb3_lut[power]);
+		add_spectrum_pixel(lut[power]);
 		
 		mean_acc += power;
 		if (power > max_power) {

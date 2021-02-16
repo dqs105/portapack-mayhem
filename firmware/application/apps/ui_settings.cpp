@@ -331,15 +331,18 @@ SetAudioView::SetAudioView(NavigationView& nav) {
 		&labels,
 		&field_tone_mix,
 		&check_deemph,
+		&field_colormap,
 		&button_ok
 	});
 
 	field_tone_mix.set_value(persistent_memory::tone_mix());
 	check_deemph.set_value(portapack::persistent_memory::deemph_enabled());
+	field_colormap.set_selected_index(persistent_memory::spec_colormap());
 	
 	button_ok.on_select = [&nav, this](Button&) {
 		persistent_memory::set_tone_mix(field_tone_mix.value());
 		persistent_memory::set_deemph_enabled(check_deemph.value());
+		persistent_memory::set_colormap((uint8_t)field_colormap.selected_index());
 		nav.pop();
 	};
 }
