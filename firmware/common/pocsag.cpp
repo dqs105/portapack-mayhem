@@ -105,7 +105,7 @@ uint32_t get_digit_code(char code) {
 char decode_digit_code(uint32_t code) {
 	code = ((code & 0x0C) >> 2) | ((code & 0x03) << 2);		// ----3210 -> ----1032
 	code = ((code & 0x0A) >> 1) | ((code & 0x05) << 1);		// ----1032 -> ----0123
-	if ((code >= 0) && (code <= 9)) {
+	if (code <= 9) {
 		code += '0';
 	} else {
 		if (code == 10)
@@ -262,7 +262,7 @@ void pocsag_decode_batch(const POCSAGPacket& batch, POCSAGState * const state) {
 			if (state->mode == STATE_CLEAR) {
 				if (codeword != POCSAG_IDLEWORD) {
 					state->function = (codeword >> 11) & 3;
-					state->address = (codeword >> 10) & 0x1FFFF8U | (i >> 1);	// 18 MSBs are transmitted + positioned addr
+					state->address = ((codeword >> 10) & 0x1FFFF8U) | (i >> 1);	// 18 MSBs are transmitted + positioned addr
 					state->mode = STATE_HAVE_ADDRESS;
 					state->out_type = ADDRESS;
 					

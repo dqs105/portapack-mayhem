@@ -110,6 +110,10 @@ private:
 class TemperatureView : public View {
 public:
 	explicit TemperatureView(NavigationView& nav);
+
+	TemperatureView(const TemperatureView &);
+	TemperatureView& operator=(const TemperatureView &nav);
+
 	~TemperatureView();
 
 	void focus() override;

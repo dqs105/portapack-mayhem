@@ -120,6 +120,9 @@ public:
 
 	AISRecentEntryDetailView(NavigationView& nav);
 
+	AISRecentEntryDetailView(const AISRecentEntryDetailView &);
+	AISRecentEntryDetailView& operator=(const AISRecentEntryDetailView &nav);
+
 	void set_entry(const AISRecentEntry& new_entry);
 	const AISRecentEntry& entry() const { return entry_; };
 

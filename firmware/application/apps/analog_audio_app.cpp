@@ -58,7 +58,7 @@ AMOptionsView::AMOptionsView(
 	};
 
 	options_zoom.set_selected_index(receiver_model.am_spec_zoom());
-	options_zoom.on_change = [this](size_t n, OptionsField::value_t) {
+	options_zoom.on_change = [this](size_t, OptionsField::value_t) {
 		receiver_model.set_am_spec_zoom(options_zoom.selected_index_value());
 	};
 }
@@ -105,12 +105,12 @@ WBFMOptionsView::WBFMOptionsView(
 	});
 
 	options_sptype.set_selected_index(receiver_model.get_wbfm_sptype());
-	options_sptype.on_change = [this](size_t n, OptionsField::value_t) {
+	options_sptype.on_change = [this](size_t, OptionsField::value_t) {
 		receiver_model.set_wbfm_sptype(options_sptype.selected_index());
 	};
 
 	options_spconfig.set_selected_index(receiver_model.get_wbfm_spwin());
-	options_spconfig.on_change = [this](size_t n, OptionsField::value_t) {
+	options_spconfig.on_change = [this](size_t, OptionsField::value_t) {
 		receiver_model.set_wbfm_spwin(options_spconfig.selected_index());
 	};
 }

@@ -112,12 +112,12 @@ POCSAGAppView::POCSAGAppView(NavigationView& nav) {
 		on_config_changed(options_bitrate.selected_index_value(),v);
 	};
 
-	options_mode.on_change = [this](size_t, OptionsField::value_t v) {
+	options_mode.on_change = [this](size_t, OptionsField::value_t) {
 		decode_mode = options_mode.selected_index_value();
 	};
 	options_mode.set_selected_index(0); // AUTO
 
-	options_paging_mode.on_change = [this](size_t, OptionsField::value_t v) {
+	options_paging_mode.on_change = [this](size_t, OptionsField::value_t) {
 		paging_mode = options_paging_mode.selected_index_value();
 	};
 	options_paging_mode.set_selected_index(0); // COM

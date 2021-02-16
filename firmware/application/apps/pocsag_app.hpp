@@ -147,7 +147,7 @@ private:
 
 	std::unique_ptr<POCSAGLogger> logger { };
 
-	uint32_t target_frequency_;
+	uint32_t target_frequency_ { 0 };
 	
 	void update_freq(rf::Frequency f);
 
