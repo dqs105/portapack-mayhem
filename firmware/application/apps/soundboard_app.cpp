@@ -128,7 +128,8 @@ void SoundBoardView::start_tx(const uint32_t id) {
 		TONES_F2D(tone_key_frequency(tone_key_index), 1536000),
 		field_speed.value(),
 		bit_type,
-		channels
+		channels,
+		field_modulation.selected_index_value()
 	);
 	baseband::set_sample_rate(sample_rate);
 
@@ -176,6 +177,7 @@ void SoundBoardView::show_infos() {
 	check_audio.hidden(false);
 	field_volume.hidden(false);
 	field_speed.hidden(false);
+	field_modulation.hidden(false);
 	button_info_back.hidden(false);
 	progressbar.hidden(false);
 
@@ -191,6 +193,7 @@ void SoundBoardView::hide_infos() {
 	check_audio.hidden(true);
 	field_volume.hidden(true);
 	field_speed.hidden(true);
+	field_modulation.hidden(true);
 	button_info_back.hidden(true);
 	progressbar.hidden(true);
 
@@ -314,6 +317,7 @@ SoundBoardView::SoundBoardView(
 		&check_audio,
 		&field_volume,
 		&field_speed,
+		&field_modulation,
 		&button_info_back,
 		&progressbar,
 		&page_info,
@@ -333,6 +337,7 @@ SoundBoardView::SoundBoardView(
 	button_info_back.hidden(true);
 	field_volume.hidden(true);
 	field_speed.hidden(true);
+	field_modulation.hidden(true);
 	progressbar.hidden(true);
 
 	

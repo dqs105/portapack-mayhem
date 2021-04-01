@@ -98,6 +98,7 @@ private:
 		{ { 2 * 8 ,  7 * 8 }, "Sample rate:", Color::light_grey() },
 		{ { 4 * 8 , 14 * 8 - 4 }, "Volume:", Color::light_grey() },
 		{ { 2 * 8 , 16 * 8 }, "Speed:   %", Color::light_grey() },
+		{ { 2 * 8 , 18 * 8 }, "Mod:", Color::light_grey() }
 	};
 	Button button_next_page {
 		{ 30 * 7, 25 * 8, 10 * 3, 2 * 14 },
@@ -163,6 +164,15 @@ private:
 		{ 25, 400 },
 		1,
 		' ',
+	};
+
+	OptionsField field_modulation {
+		{ 6 * 8, 18 * 8 },
+		2,
+		{
+			{ "FM", 0 },
+			{ "AM", 1 }
+		}
 	};
 	
 	OptionsField options_tone_key {

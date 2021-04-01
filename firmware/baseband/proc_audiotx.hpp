@@ -48,6 +48,7 @@ private:
 	ToneGen tone_gen { };
 	
 	uint32_t resample_inc { }, resample_acc { };
+	uint8_t mod_type { 0 };
 	uint32_t fm_delta { 0 };
 	uint32_t phase { 0 }, sphase { 0 };
 	int32_t sample { 0 }, delta { };

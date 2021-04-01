@@ -44,9 +44,9 @@ SigGenView::~SigGenView() {
 
 void SigGenView::update_config() {
 	if(checkbox_stop.value())
-		baseband::set_siggen_config(transmitter_model.channel_bandwidth(), options_shape.selected_index_value(), field_stop.value());
+		baseband::set_siggen_config(transmitter_model.channel_bandwidth(), options_shape.selected_index_value(), field_stop.value(), field_modulation.selected_index_value());
 	else
-		baseband::set_siggen_config(transmitter_model.channel_bandwidth(), options_shape.selected_index_value(), 0);
+		baseband::set_siggen_config(transmitter_model.channel_bandwidth(), options_shape.selected_index_value(), 0, field_modulation.selected_index_value());
 	
 }
 
@@ -92,6 +92,7 @@ SigGenView::SigGenView(
 		&button_update,
 		&checkbox_auto,
 		&checkbox_stop,
+		&field_modulation,
 		&field_stop,
 		&tx_view
 	});
@@ -121,6 +122,8 @@ SigGenView::SigGenView(
 		auto_update = v;
 	};
 	
+	field_modulation.set_selected_index(0);
+
 	tx_view.on_edit_frequency = [this, &nav]() {
 		auto new_view = nav.push<FrequencyKeypadView>(receiver_model.tuning_frequency());
 		new_view->on_changed = [this](rf::Frequency f) {

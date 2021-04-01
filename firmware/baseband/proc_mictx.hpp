@@ -56,6 +56,8 @@ private:
 	uint64_t power_acc { 0 };
 	uint32_t power_acc_count { 0 };
 	bool play_beep { false };
+
+	uint8_t mod_type { 0 };
 	uint32_t fm_delta { 0 };
 	uint32_t phase { 0 }, sphase { 0 };
 	int32_t sample { 0 }, delta { };

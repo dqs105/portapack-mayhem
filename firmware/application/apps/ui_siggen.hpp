@@ -64,7 +64,7 @@ private:
 		{ { 6 * 8, 4 + 10 }, "Shape:", Color::light_grey() },
 		{ { 7 * 8, 7 * 8 }, "Tone:      Hz", Color::light_grey() },
 		{ { 22 * 8, 15 * 8 + 4 }, "s.", Color::light_grey() },
-		{ { 8 * 8, 20 * 8 }, "Modulation: FM", Color::light_grey() }
+		{ { 8 * 8, 20 * 8 }, "Modulation: ", Color::light_grey() }
 	};
 	
 	ImageOptionsField options_shape {
@@ -116,6 +116,15 @@ private:
 		{ 1, 99 },
 		1,
 		' '
+	};
+
+	OptionsField field_modulation {
+		{ 20 * 8, 20 * 8 },
+		2,
+		{
+			{ "FM", 0 },
+			{ "AM", 1 }
+		}
 	};
 	
 	TransmitterView tx_view {

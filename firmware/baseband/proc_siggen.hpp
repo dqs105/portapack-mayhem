@@ -42,6 +42,7 @@ private:
 	uint32_t lfsr { }, feedback { }, tone_shape { };
     uint32_t sample_count { 0 };
     bool auto_off { };
+	uint8_t mod_type { 0 };
 	uint32_t tone_phase { 0 }, phase { 0 }, delta { 0 }, sphase { 0 };
 	int8_t sample { 0 };
 	int8_t re { 0 }, im { 0 };

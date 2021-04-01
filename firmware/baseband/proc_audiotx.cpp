@@ -80,14 +80,18 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 			sample = tone_gen.process((int8_t)(this_sample >> 8));
 		}
 		
-		// FM
-		delta = sample * fm_delta;
-		
-		phase += delta;
-		sphase = phase + (64 << 24);
-		
-		re = sine_table_i8[(sphase & 0xFF000000U) >> 24];
-		im = sine_table_i8[(phase & 0xFF000000U) >> 24];
+		if(mod_type == 1) { // AM
+			re = sample / 2 + 64;
+			im = 0;
+		} else { // FM
+			delta = sample * fm_delta;
+			
+			phase += delta;
+			sphase = phase + (64 << 24);
+			
+			re = sine_table_i8[(sphase & 0xFF000000U) >> 24];
+			im = sine_table_i8[(phase & 0xFF000000U) >> 24];
+		}
 
 		if (!as) {
 			as = audio_decimation_factor - 1;
@@ -156,6 +160,7 @@ void AudioTXProcessor::audio_config(const AudioTXConfigMessage& message) {
 	baseband_fs = (size_t)((float)baseband_fs_base / ((float)message.speed / 100.0));
 	bit_type = message.bit_type;
 	channels = message.channels;
+	mod_type = message.mod_type;
 }
 
 void AudioTXProcessor::replay_config(const ReplayConfigMessage& message) {

@@ -179,7 +179,7 @@ void kill_afsk() {
 }
 
 void set_audiotx_config(const uint32_t divider, const float deviation_hz, const float audio_gain,
-					const uint32_t tone_key_delta, const uint16_t speed, const uint8_t bit_type, const uint8_t channels) {
+					const uint32_t tone_key_delta, const uint16_t speed, const uint8_t bit_type, const uint8_t channels, const uint8_t mod_type) {
 	const AudioTXConfigMessage message {
 		divider,
 		deviation_hz,
@@ -189,6 +189,7 @@ void set_audiotx_config(const uint32_t divider, const float deviation_hz, const 
 		speed,
 		bit_type,
 		channels,
+		mod_type
 	};
 	send_message(&message);
 }
@@ -282,9 +283,9 @@ void set_siggen_tone(const uint32_t tone) {
 	send_message(&message);
 }
 
-void set_siggen_config(const uint32_t bw, const uint32_t shape, const uint32_t duration) {
+void set_siggen_config(const uint32_t bw, const uint32_t shape, const uint32_t duration, uint8_t mod_type) {
 	const SigGenConfigMessage message {
-		bw, shape, duration * TONES_SAMPLERATE
+		bw, shape, duration * TONES_SAMPLERATE, mod_type
 	};
 	send_message(&message);
 }

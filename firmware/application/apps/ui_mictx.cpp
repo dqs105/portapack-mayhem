@@ -65,7 +65,9 @@ void MicTXView::configure_baseband() {
 		sampling_rate / 20,		// Update vu-meter at 20Hz
 		transmitting ? transmitter_model.channel_bandwidth() : 0,
 		mic_gain,
-		TONES_F2D(tone_key_frequency(tone_key_index), sampling_rate)
+		TONES_F2D(tone_key_frequency(tone_key_index), sampling_rate),
+		100,0,0,
+		field_modulation.selected_index_value()
 	);
 }
 
@@ -201,6 +203,7 @@ MicTXView::MicTXView(
 		&field_bw,
 		&field_rfgain,
 		&field_rfamp,
+		&field_modulation,
 		&field_frequency,
 		&options_tone_key,
 		&check_rogerbeep,

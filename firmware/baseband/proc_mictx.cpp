@@ -71,16 +71,19 @@ void MicTXProcessor::execute(const buffer_c8_t& buffer){
 		}
 		
 		sample = tone_gen.process(sample);
-		
-		// FM
-		if (configured) {
-			delta = sample * fm_delta;
-			
-			phase += delta;
-			sphase = phase >> 24;
 
-			re = (sine_table_i8[(sphase + 64) & 255]);
-			im = (sine_table_i8[sphase]);
+		if (configured) {
+			if(mod_type == 1) { // AM
+				re = sample / 2 + 64;
+			} else { // FM
+				delta = sample * fm_delta;
+				
+				phase += delta;
+				sphase = phase >> 24;
+
+				re = (sine_table_i8[(sphase + 64) & 255]);
+				im = (sine_table_i8[sphase]);
+			}
 		} else {
 			re = 0;
 			im = 0;
@@ -97,6 +100,7 @@ void MicTXProcessor::on_message(const Message* const msg) {
 	switch(msg->id) {
 		case Message::ID::AudioTXConfig:
 			fm_delta = config_message.deviation_hz * (0xFFFFFFUL / baseband_fs);
+			mod_type = config_message.mod_type;
 			
 			audio_gain = config_message.audio_gain;
 			divider = config_message.divider;

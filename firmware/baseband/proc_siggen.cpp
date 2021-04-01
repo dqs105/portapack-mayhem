@@ -72,14 +72,20 @@ void SigGenProcessor::execute(const buffer_c8_t& buffer) {
 			
 			tone_phase += tone_delta;
 			
-			// Do FM
-			delta = sample * fm_delta;
-			
-			phase += delta;
-			sphase = phase + (64 << 24);
+			if(mod_type == 1) { // AM
+				re = sample / 2 + 64;
+				im = 0;
+			} else { // FM
+				// Do FM
+				delta = sample * fm_delta;
+				
+				phase += delta;
+				sphase = phase + (64 << 24);
 
-			re = (sine_table_i8[(sphase & 0xFF000000) >> 24]);
-			im = (sine_table_i8[(phase & 0xFF000000) >> 24]);
+				re = (sine_table_i8[(sphase & 0xFF000000) >> 24]);
+				im = (sine_table_i8[(phase & 0xFF000000) >> 24]);
+			}
+			
 		}
 
 		buffer.p[i] = {re, im};
@@ -106,6 +112,8 @@ void SigGenProcessor::on_message(const Message* const msg) {
 			tone_shape = message.shape;
 			
 //			lfsr = 0x54DF0119;
+
+			mod_type = message.mod_type;
 
 			configured = true;
 			break;
