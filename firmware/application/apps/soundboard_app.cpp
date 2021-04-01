@@ -108,14 +108,14 @@ void SoundBoardView::start_tx(const uint32_t id) {
 	}
 	
 	playing_id = id;
+
+	sample_rate = reader->sample_rate();
+	bit_type = reader->bits_per_sample() == 8 ? 0 : 1;
+	channels = reader->channels() - 1;
 	
 	progressbar.set_max(reader->sample_count() * (bit_type ? 2 : 1));
 	
 	//button_play.set_bitmap(&bitmap_stop);
-	
-	sample_rate = reader->sample_rate();
-	bit_type = reader->bits_per_sample() == 8 ? 0 : 1;
-	channels = reader->channels() - 1;
 
 	// It's terrible. System transmitting threading seems to be limited to around 2478000Hz.
 	transmitter_model.set_sampling_rate(1536000);
