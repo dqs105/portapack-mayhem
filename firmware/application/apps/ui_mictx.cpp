@@ -67,7 +67,7 @@ void MicTXView::configure_baseband() {
 		mic_gain,
 		TONES_F2D(tone_key_frequency(tone_key_index), sampling_rate),
 		100,0,0,
-		field_modulation.selected_index_value()
+		mod_type
 	);
 }
 
@@ -146,8 +146,19 @@ void MicTXView::rxaudio(bool is_on) {
 	if (is_on) {
 		audio::input::stop();
 		baseband::shutdown();
-		baseband::run_image(portapack::spi_flash::image_tag_nfm_audio);
-		receiver_model.set_modulation(ReceiverModel::Mode::NarrowbandFMAudio);
+		if (mod_type) {
+			baseband::run_image(portapack::spi_flash::image_tag_am_audio);
+			receiver_model.set_modulation(ReceiverModel::Mode::AMAudio);	
+			if (options_mode.selected_index() < 4)
+				receiver_model.set_am_configuration(options_mode.selected_index() - 1);
+			else
+				receiver_model.set_am_configuration(0);
+		}
+		else {
+			baseband::run_image(portapack::spi_flash::image_tag_nfm_audio);
+			receiver_model.set_modulation(ReceiverModel::Mode::NarrowbandFMAudio);
+			
+		}
 		receiver_model.set_sampling_rate(3072000);
 		receiver_model.set_baseband_bandwidth(1750000);	
 //		receiver_model.set_tuning_frequency(field_frequency.value()); //probably this too can be commented out.
@@ -160,6 +171,7 @@ void MicTXView::rxaudio(bool is_on) {
 		audio_level = 0; // Fix VUMeter disappear bug
 		update_vumeter();
 	} else {	//These incredibly convoluted steps are required for the vumeter to reappear when stopping RX.
+		receiver_model.set_modulation(ReceiverModel::Mode::NarrowbandFMAudio); //This fixes something with AM RX...
 		receiver_model.disable();
 		audio::output::stop();
 		baseband::shutdown();
@@ -203,12 +215,13 @@ MicTXView::MicTXView(
 		&field_bw,
 		&field_rfgain,
 		&field_rfamp,
-		&field_modulation,
+		&options_mode,
 		&field_frequency,
 		&options_tone_key,
 		&check_rogerbeep,
 		&check_rxactive,
 		&field_volume,
+		&field_rxbw,
 		&field_squelch,
 		&field_rxfrequency,
 		&field_rxlna,
@@ -283,6 +296,14 @@ MicTXView::MicTXView(
 			transmitter_model.set_rf_amp(rf_amp);
 	};
 	field_rfamp.set_value(rf_amp ? 14 : 0);
+	
+	options_mode.on_change = [this](size_t, int32_t v) {
+		mod_type = v;
+		if(mod_type == 0)
+			field_bw.set_value(transmitter_model.channel_bandwidth() / 1000);
+
+		rxaudio(rx_enabled); //Update now if we have RX audio on
+	};
 	
 	/*
 	check_va.on_select = [this](Checkbox&, bool v) {
@@ -367,6 +388,21 @@ MicTXView::MicTXView(
 
 	field_volume.set_value((receiver_model.headphone_volume() - audio::headphone::volume_range().max).decibel() + 99);
 	field_volume.on_change = [this](int32_t v) { this->on_headphone_volume_changed(v);	};
+
+	field_rxbw.on_change = [this](size_t, int32_t v) {
+		switch(v) {
+			case 0:
+				receiver_model.set_nbfm_configuration(0);
+				break;
+			case 1:
+				receiver_model.set_nbfm_configuration(1);
+				break;
+			case 2:
+				receiver_model.set_nbfm_configuration(2);
+				break;
+		}
+	};
+	field_rxbw.set_selected_index(2);
 
 	field_squelch.on_change = [this](int32_t v) { 
 		receiver_model.set_squelch_level(100 - v);	

@@ -100,11 +100,13 @@ private:
 	bool button_touch { false };
 	bool force_on { false };
 
+	//AM TX Stuff
+	uint8_t mod_type { 0 };
 	
 	Labels labels {
 		{ { 3 * 8, 1 * 8 }, "MIC. AMP:   V:    G:", Color::light_grey() },
 		{ { 3 * 8, 3 * 8 }, "F:", Color::light_grey() },
-		{ { 15 * 8, 3 * 8 }, "BW:   kHz", Color::light_grey() },
+		{ { 15 * 8, 3 * 8 }, "BW:   kHz(FM)", Color::light_grey() },
 		{ { 3 * 8, 5 * 8 }, "GAIN:", Color::light_grey() },
 		{ {11 * 8, 5 * 8 }, "Amp:", Color::light_grey() },
 		{ {18 * 8, 5 * 8 }, "Mod:", Color::light_grey() },
@@ -114,6 +116,7 @@ private:
 		{ {20 * 8, 10 * 8 }, "DEC:", Color::light_grey() },
 		{ { 4 * 8, ( 13 * 8 ) - 2 }, "TONE KEY:", Color::light_grey() },
 		{ { 9 * 8, 23 * 8 }, "VOL:", Color::light_grey() },
+		{ {17 * 8, 23 * 8 }, "FM RXBW:", Color::light_grey() },
 		{ {17 * 8, 25 * 8 }, "SQ:", Color::light_grey() },
 		{ { 5 * 8, 25 * 8 }, "F:", Color::light_grey() },
 		{ { 5 * 8, 27 * 8 }, "LNA:", Color::light_grey()},
@@ -181,12 +184,15 @@ private:
 		' '
 	};
 
-	OptionsField field_modulation {
+	OptionsField options_mode {
 		{ 22 * 8, 5 * 8 },
-		2,
+		3,
 		{
-			{ "FM", 0 },
-			{ "AM", 1 }
+			{ "FM ", 0 },
+			{ "AM ", 1 },
+			{ "USB", 2 },
+			{ "LSB", 3 },
+			{ "DSB", 4 }
 		}
 	};
 	/*
@@ -257,6 +263,16 @@ private:
 		{ 0, 99 },
 		1,
 		' ',
+	};
+
+	OptionsField field_rxbw {
+		{ 25 * 8, 23 * 8},
+		3,
+		{
+			{ "8k5", 0 },
+			{ "11k", 1 },
+			{ "16k", 2 }
+		}
 	};
 	
 	NumberField field_squelch {

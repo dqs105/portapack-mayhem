@@ -36,6 +36,10 @@ void MicTXProcessor::execute(const buffer_c8_t& buffer){
 	
 	audio_input.read_audio_buffer(audio_buffer);
 
+	if(mod_type > 1) {
+		modulator->execute(audio_buffer, buffer);
+	}
+
 	for (size_t i = 0; i < buffer.count; i++) {
 		
 		if (!play_beep) {
@@ -69,13 +73,12 @@ void MicTXProcessor::execute(const buffer_c8_t& buffer){
 			
 			sample = beep_gen.process(0);
 		}
-		
 		sample = tone_gen.process(sample);
 
-		if (configured) {
-			if(mod_type == 1) { // AM
-				re = sample / 2 + 64;
-			} else { // FM
+		if (mod_type < 2) {
+			re = 0;
+			im = 0;
+			if(mod_type == 0) { // FM
 				delta = sample * fm_delta;
 				
 				phase += delta;
@@ -84,12 +87,15 @@ void MicTXProcessor::execute(const buffer_c8_t& buffer){
 				re = (sine_table_i8[(sphase + 64) & 255]);
 				im = (sine_table_i8[sphase]);
 			}
-		} else {
-			re = 0;
-			im = 0;
+			if(mod_type == 1) { // AM
+				re = sample / 2 + 64;
+				im = re;
+			}
+
+			buffer.p[i] = { re, im };
 		}
 		
-		buffer.p[i] = { re, im };
+		
 	}
 }
 
@@ -101,6 +107,32 @@ void MicTXProcessor::on_message(const Message* const msg) {
 		case Message::ID::AudioTXConfig:
 			fm_delta = config_message.deviation_hz * (0xFFFFFFUL / baseband_fs);
 			mod_type = config_message.mod_type;
+			if (mod_type == 0) {
+				dsp::modulate::FM *fm = new dsp::modulate::FM();
+				
+				fm->set_fm_delta(config_message.deviation_hz * (0xFFFFFFUL / baseband_fs));
+				modulator = fm;
+			}
+			if (mod_type == 1) {
+				modulator = new dsp::modulate::AM();
+				modulator->set_mode(dsp::modulate::Mode::AM);
+			}
+			if (mod_type == 2) {
+				modulator = new dsp::modulate::SSB();
+				modulator->set_mode(dsp::modulate::Mode::USB);
+			}
+			
+			if (mod_type == 3) {
+				modulator = new dsp::modulate::SSB();
+				modulator->set_mode(dsp::modulate::Mode::LSB);
+			}
+			
+			if (mod_type == 4) {
+				modulator = new dsp::modulate::AM();
+				modulator->set_mode(dsp::modulate::Mode::DSB);
+			}
+
+            modulator->set_over(baseband_fs / 24000);
 			
 			audio_gain = config_message.audio_gain;
 			divider = config_message.divider;
