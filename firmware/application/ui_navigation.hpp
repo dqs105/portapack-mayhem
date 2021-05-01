@@ -214,7 +214,7 @@ public:
 	InformationView(NavigationView& nav);
 	
 private:
-	static constexpr auto version_string = "v1.3.1-local";
+	static constexpr auto version_string = "v1.4.0-local";
 	NavigationView& nav_;
 
 	Rectangle backdrop {
