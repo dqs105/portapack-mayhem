@@ -104,6 +104,10 @@ void ADSBRxDetailsView::update(const AircraftRecentEntry& entry) {
 		geomap_view->update_position(entry_copy.pos.latitude, entry_copy.pos.longitude, entry_copy.velo.heading);
 }
 
+bool ADSBRxDetailsView::is_selected(const AircraftRecentEntry& entry) {
+	return entry.ICAO_address == selected_icao;
+}
+
 ADSBRxDetailsView::~ADSBRxDetailsView() {
 	on_close_();
 }
@@ -134,6 +138,9 @@ ADSBRxDetailsView::ADSBRxDetailsView(
 	});
 	
 	std::unique_ptr<ADSBLogger> logger { };
+
+	selected_icao = entry_copy.ICAO_address;
+
 	update(entry_copy);
 
 	// The following won't (shouldn't !) change for a given airborne aircraft
@@ -239,7 +246,7 @@ void ADSBRxView::on_frame(const ADSBFrameMessage * message) {
 					entry.set_info_string(str_info);
 					logentry+=str_info+ " ";
 
-					if (send_updates)
+					if (send_updates && details_view->is_selected(entry))
 						details_view->update(entry);
 				}
 			} else if(msg_type == 19 && msg_sub >= 1 && msg_sub <= 4){
@@ -247,7 +254,7 @@ void ADSBRxView::on_frame(const ADSBFrameMessage * message) {
 				logentry += "Type:" + to_string_dec_uint(msg_sub) +
 							" Hdg:" + to_string_dec_uint(entry.velo.heading) +
 							" Spd: "+ to_string_dec_int(entry.velo.speed);
-				if (send_updates)
+				if (send_updates && details_view->is_selected(entry))
 					details_view->update(entry);
 			}
 		}

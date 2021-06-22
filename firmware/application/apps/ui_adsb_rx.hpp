@@ -135,6 +135,7 @@ public:
 	void focus() override;
 	
 	void update(const AircraftRecentEntry& entry);
+	bool is_selected(const AircraftRecentEntry& entry);
 	
 	std::string title() const override { return "Details"; };
 	
@@ -144,6 +145,8 @@ private:
 	GeoMapView* geomap_view { nullptr };
 	bool send_updates { false };
 	File db_file { };
+
+	uint32_t selected_icao = 0;
 	
 	Labels labels {
 		{ { 0 * 8, 1 * 16 }, "Callsign:", Color::light_grey() },
