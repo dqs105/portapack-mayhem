@@ -122,7 +122,8 @@ void TemperatureWidget::paint(Painter& painter) {
 
 TemperatureWidget::temperature_t TemperatureWidget::temperature(const sample_t sensor_value) const {
 //	return -35 + sensor_value * 4;  //max2837 datasheet temp 25ºC has sensor value: 15
-	return (int32_t)(pow((float)sensor_value, 2) * -0.04092f + 5.298f * (float)sensor_value - 45.26f); // Regression calc according to the datasheet.
+//	return (int32_t)(pow((float)sensor_value, 2) * -0.04092f + 5.298f * (float)sensor_value - 45.26f); // Regression calc according to the datasheet.
+	return -40 +(sensor_value * 4.31)+25; /*It seems to be a temperature difference of 25C*/
 }
 
 std::string TemperatureWidget::temperature_str(const temperature_t temperature) const {
