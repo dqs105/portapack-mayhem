@@ -69,7 +69,7 @@
 #include "ui_whipcalc.hpp"
 #include "ui_wavplayer.hpp"
 
-#include "acars_app.hpp"
+//#include "acars_app.hpp"
 #include "ais_app.hpp"
 #include "analog_audio_app.hpp"
 #include "analog_tv_app.hpp"
@@ -352,11 +352,19 @@ InformationView::InformationView(
 	});
 
 	version.set_style(&style_infobar);
+
+	ltime.set_hide_clock(portapack::persistent_memory::hide_clock());
 	ltime.set_style(&style_infobar);
 	ltime.set_seconds_enabled(true);
-	ltime.set_date_enabled(false);
-
+	ltime.set_date_enabled(portapack::persistent_memory::clock_with_date());
 	set_dirty();
+}
+
+void InformationView::refresh() {
+	ltime.set_hide_clock(portapack::persistent_memory::hide_clock());
+	ltime.set_seconds_enabled(true);
+	ltime.set_date_enabled(portapack::persistent_memory::clock_with_date());	
+
 }
 
 /* Navigation ************************************************************/
@@ -608,6 +616,7 @@ SystemView::SystemView(
 		}
 		else{
 			add_child(&info_view);
+			info_view.refresh();
 		}
 		
 		this->status_view.set_back_enabled(!this->navigation_view.is_top());
@@ -629,7 +638,9 @@ SystemView::SystemView(
 		navigation_view.push<SystemMenuView>();
 		
 		if (portapack::persistent_memory::config_splash())
+		{
 			navigation_view.push<BMPView>();
+		}
 		status_view.set_back_enabled(false);
 		status_view.set_title_image_enabled(true);
 		status_view.set_dirty();

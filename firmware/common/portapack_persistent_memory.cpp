@@ -26,7 +26,6 @@
 #include "hal.h"
 
 #include "utility.hpp"
-#include "crc.hpp"
 
 #include "memory_map.hpp"
 using portapack::memory::map::backup_ram;
@@ -96,8 +95,6 @@ struct data_t {
 	uint32_t pocsag_ignore_address;
 	
 	int32_t tone_mix;
-	
-	uint32_t pmem_crc;
 };
 
 static_assert(sizeof(data_t) <= backup_ram.size(), "Persistent memory structure too large for VBAT-maintained region");
@@ -228,11 +225,18 @@ void set_playdead_sequence(const uint32_t new_value) {
 
 // ui_config is an uint32_t var storing information bitwise
 // bits 0,1,2 store the backlight timer
-// bits 31, 30,29,28,27 stores the different single bit configs depicted below
+// bits 31, 30,29,28,27, 26, 25 stores the different single bit configs depicted below
 // bits on position 4 to 19 (16 bits) store the clkout frequency
 
-// New: 26 FM deemphasis
+// New: 24 FM deemphasis
 // 20-21: spec colormap type
+bool hide_clock() { // clock hidden from main menu
+	return data->ui_config & (1 << 25);
+}
+
+bool clock_with_date() { // show clock with date, if not hidden
+	return data->ui_config & (1 << 26);
+}
 
 bool clkout_enabled() {
 	return data->ui_config & (1 << 27);
@@ -256,6 +260,14 @@ bool config_splash() {
 uint32_t config_backlight_timer() {
 	const uint32_t timer_seconds[8] = { 0, 5, 15, 30, 60, 180, 300, 600 };
 	return timer_seconds[data->ui_config & 7]; //first three bits, 8 possible values
+}
+
+void set_clock_hidden(bool v) {
+	data->ui_config = (data->ui_config & ~(1 << 25)) | (v << 25);
+}
+
+void set_clock_with_date(bool v) {
+	data->ui_config = (data->ui_config & ~(1 << 26)) | (v << 26);
 }
 
 void set_clkout_enabled(bool v) {
@@ -326,11 +338,11 @@ void set_clkout_freq(uint32_t freq) {
 }
 
 bool deemph_enabled() {
-	return (data->ui_config & 0x04000000UL);
+	return (data->ui_config & 0x01000000UL);
 }
 
 void set_deemph_enabled(bool enable) {
-	data->ui_config = (data->ui_config & ~0x04000000UL) | (enable << 26);
+	data->ui_config = (data->ui_config & ~0x01000000UL) | (enable << 24);
 }
 
 uint8_t spec_colormap() {

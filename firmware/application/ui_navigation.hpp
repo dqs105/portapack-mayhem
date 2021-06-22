@@ -212,9 +212,9 @@ private:
 class InformationView : public View {
 public:
 	InformationView(NavigationView& nav);
-	
+	void refresh();	
 private:
-	static constexpr auto version_string = "v1.4.0-local";
+	static constexpr auto version_string = "v1.4.0-LOC";
 	NavigationView& nav_;
 
 	Rectangle backdrop {
@@ -228,8 +228,10 @@ private:
 	};
 	
 	LiveDateTime ltime {
-		{174, 0, 8 * 8, 16}
+		{86, 0, 19 * 8, 16}
 	};
+	
+
 };
 
 class BMPView : public View {
