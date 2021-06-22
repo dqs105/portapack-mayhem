@@ -114,7 +114,7 @@ AM::AM() {
 
 void AM::execute(const buffer_s16_t& audio, const buffer_c8_t& buffer) {
 	int32_t         sample = 0;
-	int8_t          re, im;
+	int8_t          re = 0, im = 0;
 //	float		q = 0.0;
 	
 	for (size_t counter = 0; counter < buffer.count; counter++) {
