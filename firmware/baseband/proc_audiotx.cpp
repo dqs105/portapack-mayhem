@@ -82,7 +82,7 @@ void AudioTXProcessor::execute(const buffer_c8_t& buffer){
 		
 		if(mod_type == 1) { // AM
 			re = sample / 2 + 64;
-			im = re;
+			im = 0;
 		} else { // FM
 			delta = sample * fm_delta;
 			
